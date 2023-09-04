@@ -6,3 +6,8 @@
 - **24/08/2023**:
     - Diagrama de Casos de Uso: Feito.
     - Entrega do Formulário 01: Feito.
+- **03/09/2023**
+    - Feita a especificação dos sequintes casos de uso:
+        - Listar Jardins;
+	- Listar Plantas do Jardim;
+	- Listar Atividades do Jardim.
