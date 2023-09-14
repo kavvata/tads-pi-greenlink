@@ -11,3 +11,8 @@
         - Listar Jardins;
 	- Listar Plantas do Jardim;
 	- Listar Atividades do Jardim.
+- **14/09/2023**
+    - Feita a especificação dos seguintes casos de uso:
+    	- Listar Todas as Plantas;
+	- Listar Todas as Atividades;
+	- Manter Jardins;
