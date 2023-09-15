@@ -1,6 +1,6 @@
 - **10/08/2023**: 
     - Atividade: Descrição do Sistema:
-	- Documento feito no semestre passado como atividade para o componente ES-II.
+    - Documento feito no semestre passado como atividade para o componente ES-II.
 - **17/08/2023**:
     - Levantamento de Requisitos: Feito.
 - **24/08/2023**:
@@ -8,11 +8,13 @@
     - Entrega do Formulário 01: Feito.
 - **03/09/2023**
     - Feita a especificação dos sequintes casos de uso:
-        - Listar Jardins;
-	- Listar Plantas do Jardim;
-	- Listar Atividades do Jardim.
+    - Listar Jardins;
+    - Listar Plantas do Jardim;
+    - Listar Atividades do Jardim.
 - **14/09/2023**
     - Feita a especificação dos seguintes casos de uso:
-    	- Listar Todas as Plantas;
-	- Listar Todas as Atividades;
-	- Manter Jardins;
+    - Listar Todas as Plantas;
+    - Listar Todas as Atividades;
+    - Manter Jardins;
+    - Manter Plantas;
+    - Manter Atividades;
