@@ -83,5 +83,11 @@ public class JDBCJardimDAO implements JardimDAO {
             return e.getMessage();
         }
     }
+
+    @Override
+    public String atualizarJardim(int id, Jardim novo) {
+        // TODO Auto-generated method stub
+        return null;
+    }
     
 }
