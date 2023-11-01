@@ -21,6 +21,10 @@ public class RepositorioJardins {
         return dao.listarJardins();
     }
 
+    public String atualizarJardim(int id, String nome, String descricao) {
+        return dao.atualizarJardim(id, new Jardim(id, nome, descricao));
+    }
+
     public String removerJardim(Jardim jardim) {
         return dao.removerJardim(jardim);
     }
