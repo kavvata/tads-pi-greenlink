@@ -86,8 +86,20 @@ public class JDBCJardimDAO implements JardimDAO {
 
     @Override
     public String atualizarJardim(int id, Jardim novo) {
-        // TODO Auto-generated method stub
-        return null;
+        try (Connection con = fabrica.getConnection()) {
+            PreparedStatement pstm = con.prepareStatement("UPDATE jardins SET nome=?, descricao=? WHERE id=?");
+
+            int valorRetorno = pstm.executeUpdate();
+
+            if (valorRetorno > 1) {
+                return "Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.";
+            }
+
+            return "Jardim atualizado!";
+
+        } catch (SQLException e) {
+            return e.getMessage();
+        }
     }
     
 }
