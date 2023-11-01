@@ -5,6 +5,7 @@ import io.github.hugoperlin.navigatorfx.BaseAppNavigator;
 /**
  * JavaFX App
  */
+
 public class App extends BaseAppNavigator {
 
     public static void main(String[] args) {
