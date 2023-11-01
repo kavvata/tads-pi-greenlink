@@ -79,6 +79,7 @@ public class JDBCJardimDAO implements JardimDAO {
             }
 
             return "Jardim removido com sucesso.";
+
         } catch (SQLException e) {
             return e.getMessage();
         }
@@ -88,6 +89,10 @@ public class JDBCJardimDAO implements JardimDAO {
     public String atualizarJardim(int id, Jardim novo) {
         try (Connection con = fabrica.getConnection()) {
             PreparedStatement pstm = con.prepareStatement("UPDATE jardins SET nome=?, descricao=? WHERE id=?");
+
+            pstm.setString(1, novo.getNome());
+            pstm.setString(2, novo.getDescricao());
+            pstm.setInt(3, id);
 
             int valorRetorno = pstm.executeUpdate();
 
