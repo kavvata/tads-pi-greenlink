@@ -6,7 +6,10 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import com.github.hugoperlin.results.Resultado;
+
 import ifpr.pgua.eic.greenlink.models.entities.Jardim;
+import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCJardimDAO implements JardimDAO {
 
@@ -20,7 +23,7 @@ public class JDBCJardimDAO implements JardimDAO {
     }
 
     @Override
-    public String cadastrarJardim(Jardim novo) {
+    public Resultado<Jardim> cadastrarJardim(Jardim novo) {
         try (Connection con = fabrica.getConnection()) {
             PreparedStatement pstm = con.prepareStatement(INSERT_SQL + "values (?, ?)");
             pstm.setString(1, novo.getNome());
@@ -28,19 +31,25 @@ public class JDBCJardimDAO implements JardimDAO {
 
             int valorRetorno = pstm.executeUpdate();
 
+            
+
             if (valorRetorno > 1) {
-                return "Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.";
+
+                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
+
             }
 
-            return "Jardim cadastrado com sucesso!";
+            novo.setId(DBUtils.getLastId(pstm));
+
+            return Resultado.sucesso("Jardim cadastrado com sucesso!", novo);
 
         } catch(SQLException e) {
-            return e.getMessage();
+            return Resultado.erro(e.getMessage());
         }
     }
 
     @Override
-    public ArrayList<Jardim> listarJardins() {
+    public Resultado<ArrayList<Jardim>> listarJardins() {
         try (Connection con = fabrica.getConnection()) {
             PreparedStatement pstm = con.prepareStatement(SELECT_SQL);
 
@@ -56,15 +65,15 @@ public class JDBCJardimDAO implements JardimDAO {
                 lista.add(new Jardim(id, nome, descricao));
             }
 
-            return lista;
+            return Resultado.sucesso("listagem com sucesso", lista);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return Resultado.erro(e.getMessage());
         }
     }
 
     @Override
-    public String removerJardim(Jardim jardim) {
+    public Resultado<Jardim> removerJardim(Jardim jardim) {
         final String DROPSQL = "DELETE FROM jardins WHERE id = ?";
 
         try (Connection con = fabrica.getConnection()) {
@@ -74,18 +83,18 @@ public class JDBCJardimDAO implements JardimDAO {
             int valorRetorno = pstm.executeUpdate();
 
             if (valorRetorno > 1) {
-                return "Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.";
+                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
             }
 
-            return "Jardim removido com sucesso.";
+            return Resultado.sucesso("Jardim removido com sucesso.", jardim);
 
         } catch (SQLException e) {
-            return e.getMessage();
+            return Resultado.erro(e.getMessage());
         }
     }
 
     @Override
-    public String atualizarJardim(int id, Jardim novo) {
+    public Resultado<Jardim> atualizarJardim(int id, Jardim novo) {
         try (Connection con = fabrica.getConnection()) {
             PreparedStatement pstm = con.prepareStatement("UPDATE jardins SET nome=?, descricao=? WHERE id=?");
 
@@ -96,18 +105,18 @@ public class JDBCJardimDAO implements JardimDAO {
             int valorRetorno = pstm.executeUpdate();
 
             if (valorRetorno > 1) {
-                return "Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.";
+                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
             }
 
-            return "Jardim atualizado!";
+            return Resultado.sucesso("Jardim atualizado!", novo);
 
         } catch (SQLException e) {
-            return e.getMessage();
+            return Resultado.erro(e.getMessage());
         }
     }
 
     @Override
-    public Jardim buscarPorId(int id) throws RuntimeException {
+    public Resultado<Jardim> buscarPorId(int id) {
         try (Connection con = fabrica.getConnection()) {
 
             PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE id=?");
@@ -115,15 +124,19 @@ public class JDBCJardimDAO implements JardimDAO {
 
             ResultSet rs = pstm.executeQuery();
 
-            rs.next();
+            boolean sucesso = rs.next();
+
+            if (!sucesso) {
+                return Resultado.erro("Jardim nao encontrado.");
+            }
 
             String nome = rs.getString("nome");
             String descricao = rs.getString("descricao");
 
-            return new Jardim(id, nome, descricao);
+            return Resultado.sucesso(descricao, new Jardim(id, nome, descricao));
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            return Resultado.erro(e.getMessage());
         }
     }
     

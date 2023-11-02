@@ -2,6 +2,8 @@ package ifpr.pgua.eic.greenlink.models.repositories;
 
 import java.util.ArrayList;
 
+import com.github.hugoperlin.results.Resultado;
+
 import ifpr.pgua.eic.greenlink.models.daos.JardimDAO;
 import ifpr.pgua.eic.greenlink.models.entities.Jardim;
 
@@ -12,20 +14,20 @@ public class RepositorioJardins {
         this.dao = dao;
     }
 
-    public String cadastrarJardim(String nome, String descricao) {
+    public Resultado<Jardim> cadastrarJardim(String nome, String descricao) {
         return dao.cadastrarJardim(new Jardim(nome, descricao));
 
     }
 
-    public ArrayList<Jardim> listarJardins() throws RuntimeException {
+    public Resultado<ArrayList<Jardim>> listarJardins() throws RuntimeException {
         return dao.listarJardins();
     }
 
-    public String atualizarJardim(int id, String nome, String descricao) {
+    public Resultado<Jardim> atualizarJardim(int id, String nome, String descricao) {
         return dao.atualizarJardim(id, new Jardim(id, nome, descricao));
     }
 
-    public String removerJardim(Jardim jardim) {
+    public Resultado<Jardim> removerJardim(Jardim jardim) {
         return dao.removerJardim(jardim);
     }
 }
