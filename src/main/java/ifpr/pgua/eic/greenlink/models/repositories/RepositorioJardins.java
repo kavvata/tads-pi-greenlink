@@ -17,7 +17,7 @@ public class RepositorioJardins {
 
     }
 
-    public ArrayList<Jardim> listarJardins() {
+    public ArrayList<Jardim> listarJardins() throws RuntimeException {
         return dao.listarJardins();
     }
 

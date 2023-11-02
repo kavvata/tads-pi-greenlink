@@ -59,8 +59,7 @@ public class JDBCJardimDAO implements JardimDAO {
             return lista;
 
         } catch (SQLException e) {
-            System.out.println(e.getMessage());
-            return new ArrayList<>();
+            throw new RuntimeException(e);
         }
     }
 
@@ -104,6 +103,27 @@ public class JDBCJardimDAO implements JardimDAO {
 
         } catch (SQLException e) {
             return e.getMessage();
+        }
+    }
+
+    @Override
+    public Jardim buscarPorId(int id) throws RuntimeException {
+        try (Connection con = fabrica.getConnection()) {
+
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE id=?");
+            pstm.setInt(1, id);
+
+            ResultSet rs = pstm.executeQuery();
+
+            rs.next();
+
+            String nome = rs.getString("nome");
+            String descricao = rs.getString("descricao");
+
+            return new Jardim(id, nome, descricao);
+
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
         }
     }
     
