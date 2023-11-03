@@ -3,10 +3,15 @@
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.control.Label?>
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ifpr.pgua.eic.greenlink.App">
    <children>
-      <ListView fx:id="lstJardins" onMouseClicked="#atualizarJardim" prefHeight="595.0" />
+      <ListView fx:id="lstJardins" onMouseClicked="#atualizarJardim" prefHeight="595.0">
+         <placeholder>
+            <Label text="+ Clique duplo para criar um novo Jardim!" />
+         </placeholder>
+      </ListView>
    </children>
    <padding>
       <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />
