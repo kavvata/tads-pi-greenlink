@@ -139,5 +139,27 @@ public class JDBCJardimDAO implements JardimDAO {
             return Resultado.erro(e.getMessage());
         }
     }
-    
+    public Resultado<Jardim> buscarPorNome(String nome) {
+        try (Connection con = fabrica.getConnection()) {
+
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE nome=?");
+            pstm.setString(1, nome);
+
+            ResultSet rs = pstm.executeQuery();
+
+            boolean sucesso = rs.next();
+
+            if (!sucesso) {
+                return Resultado.erro("Jardim nao encontrado.");
+            }
+
+            int id = rs.getInt("id");
+            String descricao = rs.getString("descricao");
+
+            return Resultado.sucesso("jardim encontrado!", new Jardim(id, nome, descricao));
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
+    }
 }

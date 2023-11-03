@@ -10,6 +10,7 @@ public interface JardimDAO {
     public Resultado<Jardim> cadastrarJardim(Jardim novo);
     public Resultado<ArrayList<Jardim>> listarJardins();
     public Resultado<Jardim> buscarPorId(int id);
+    public Resultado<Jardim> buscarPorNome(String nome);
     public Resultado<Jardim> atualizarJardim(int id, Jardim novo);
     public Resultado<Jardim> removerJardim(Jardim jardim);
 }

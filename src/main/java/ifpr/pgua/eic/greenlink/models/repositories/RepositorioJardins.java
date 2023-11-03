@@ -27,6 +27,10 @@ public class RepositorioJardins {
         return dao.atualizarJardim(id, new Jardim(id, nome, descricao));
     }
 
+    public Resultado<Jardim> buscarporNome(String nome) {
+        return dao.buscarPorNome(nome);
+    }
+
     public Resultado<Jardim> removerJardim(Jardim jardim) {
         return dao.removerJardim(jardim);
     }

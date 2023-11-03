@@ -1,6 +1,7 @@
 package ifpr.pgua.eic.greenlink;
 
 import ifpr.pgua.eic.greenlink.controllers.ListarJardins;
+import ifpr.pgua.eic.greenlink.controllers.ManterJardim;
 import ifpr.pgua.eic.greenlink.models.daos.FabricaConexoes;
 import ifpr.pgua.eic.greenlink.models.daos.JDBCJardimDAO;
 import ifpr.pgua.eic.greenlink.models.daos.JardimDAO;
@@ -35,6 +36,8 @@ public class App extends BaseAppNavigator {
     @Override
     public void registrarTelas() {
         registraTela("LISTARJARDINS", new ScreenRegistryFXML(App.class, "listar_jardins.fxml", o -> new ListarJardins(repositorioJardins)));
+        registraTela("MANTERJARDIM", new ScreenRegistryFXML(App.class, "manter_jardim.fxml", o -> new ManterJardim(repositorioJardins)));
+        // registraTela("LISTARPLANTAS", new ScreenRegistryFXML(App.class, "listar_todas_plantas.fxml", o -> new ListarTodasPlantas(repositorioPlantas)));
     }
 
 }

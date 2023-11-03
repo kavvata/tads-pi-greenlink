@@ -4,11 +4,14 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import ifpr.pgua.eic.greenlink.App;
 import ifpr.pgua.eic.greenlink.models.entities.Jardim;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
+import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.ListView;
+import javafx.scene.input.MouseEvent;
 
 public class ListarJardins implements Initializable {
     @FXML
@@ -20,14 +23,32 @@ public class ListarJardins implements Initializable {
         this.repo = repo;
     }
 
+    @FXML
+    void cadastrarJardim(ActionEvent e) {
+        App.pushScreen("MANTERJARDIM");
+        atualizarLista();
+    }
+
+    @FXML
+    void atualizarJardim(MouseEvent e) {
+        if (e.getClickCount() > 1) {
+            App.pushScreen("MANTERJARDIM",
+                    o -> new ManterJardim(repo, lstJardins.getSelectionModel().getSelectedItem()));
+
+            atualizarLista();
+        }
+    }
+
+    private void atualizarLista() {
+        ArrayList<Jardim> lista = repo.listarJardins().comoSucesso().getObj();
+        lstJardins.getItems().clear();
+        lstJardins.getItems().addAll(lista);
+    }
+
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        try {
-            ArrayList<Jardim> lista = repo.listarJardins();
-            lstJardins.getItems().addAll(lista);
-        } catch (RuntimeException e) {
-
-        }
+        ArrayList<Jardim> lista = repo.listarJardins().comoSucesso().getObj();
+        lstJardins.getItems().addAll(lista);
     }
 
 
