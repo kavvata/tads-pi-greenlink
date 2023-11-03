@@ -24,7 +24,7 @@
                <buttons>
                   <Button mnemonicParsing="false" onAction="#listarJardins" text="Jardins" />
                   <Button mnemonicParsing="false" onAction="#listarPlantas" text="Todas as plantas" />
-                  <Button mnemonicParsing="false" onAction="#listarAtividades" text="Todas as Atividades" />
+                  <Button mnemonicParsing="false" onAction="#listarAtividades" text="Todas as Tarefas" />
                </buttons>
             </ButtonBar>
          </children>

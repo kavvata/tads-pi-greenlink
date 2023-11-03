@@ -97,14 +97,14 @@ public class ManterJardim implements Initializable {
 
     @FXML
     void remover(ActionEvent e) {
-        ButtonType btSim = new ButtonType("Sim");
-        ButtonType btNao = new ButtonType("Não");
+        ButtonType btSim = new ButtonType("Remover");
+        ButtonType btNao = new ButtonType("Cancelar");
 
         Alert confirmacao = new Alert(
             AlertType.CONFIRMATION, 
-            "Tem certeza que deseja remover esse jardim?", 
-            btSim, 
-            btNao
+            "Tem certeza que deseja remover esse jardim, suas plantas e as tarefas vinculadas à elas?", 
+            btNao, 
+            btSim
         );
 
         confirmacao.showAndWait().ifPresent( resposta -> {
@@ -113,10 +113,11 @@ public class ManterJardim implements Initializable {
                 Alert alert = new Alert(AlertType.INFORMATION, resultado.getMsg());
 
                 alert.showAndWait();
+                voltar(e);    
             }
         });
 
-        voltar(e);
+        
     }
 
     @FXML
