@@ -23,7 +23,7 @@ public class Principal {
 
     @FXML
     void listarPlantas(ActionEvent event) {
-
+        App.changeScreenRegion("LISTARPLANTAS", BorderPaneRegion.CENTER);
     }
 
 }
