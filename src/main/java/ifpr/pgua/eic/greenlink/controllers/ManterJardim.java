@@ -8,11 +8,13 @@ import com.github.hugoperlin.results.Resultado;
 import ifpr.pgua.eic.greenlink.App;
 import ifpr.pgua.eic.greenlink.models.entities.Jardim;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
+import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
+import javafx.scene.control.ButtonType;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
@@ -39,7 +41,6 @@ public class ManterJardim implements Initializable {
     private Button btAcao;
 
     @FXML
-    /* TODO */
     private Button btRemover;
 
     @FXML
@@ -95,8 +96,32 @@ public class ManterJardim implements Initializable {
     }
 
     @FXML
+    void remover(ActionEvent e) {
+        ButtonType btSim = new ButtonType("Sim");
+        ButtonType btNao = new ButtonType("Não");
+
+        Alert confirmacao = new Alert(
+            AlertType.CONFIRMATION, 
+            "Tem certeza que deseja remover esse jardim?", 
+            btSim, 
+            btNao
+        );
+
+        confirmacao.showAndWait().ifPresent( resposta -> {
+            if (resposta == btSim) {
+                Resultado<Jardim> resultado = repo.removerJardim(antigo);
+                Alert alert = new Alert(AlertType.INFORMATION, resultado.getMsg());
+
+                alert.showAndWait();
+            }
+        });
+
+        voltar(e);
+    }
+
+    @FXML
     void voltar(ActionEvent event) {
-        App.popScreen();
+        App.changeScreenRegion("LISTARJARDINS", BorderPaneRegion.CENTER);
     }
 
     private boolean camposSaoValidos() {
@@ -119,6 +144,7 @@ public class ManterJardim implements Initializable {
             taDescricao.setText(antigo.getDescricao());
 
             btAcao.setText("Atualizar");
+            btRemover.setVisible(true);
         }
     }
 
