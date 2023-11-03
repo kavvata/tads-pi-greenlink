@@ -41,7 +41,11 @@
             <artifactId>dotenv-java</artifactId>
             <version>2.2.4</version>
         </dependency>
-
+	<dependency>
+            <groupId>com.github.hugoperlin</groupId>
+            <artifactId>results</artifactId>
+            <version>1.0.1</version>
+        </dependency>
     </dependencies>
     <build>
         <plugins>
