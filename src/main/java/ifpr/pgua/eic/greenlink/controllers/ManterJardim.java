@@ -29,8 +29,6 @@ public class ManterJardim implements Initializable {
 
 
     private Jardim antigo;
-    
-    final private boolean atualizacao;
 
     private RepositorioJardins repo;
 
@@ -49,17 +47,11 @@ public class ManterJardim implements Initializable {
 
     public ManterJardim(RepositorioJardins repo) {
         this.repo = repo;
-        atualizacao = false;
     }
 
     public ManterJardim(RepositorioJardins repo, Jardim antigo) {
         this.repo = repo;
         this.antigo = antigo;
-        atualizacao = true;
-    }
-
-    public boolean isAtualizacao() {
-        return atualizacao;
     }
 
     @FXML
@@ -75,7 +67,7 @@ public class ManterJardim implements Initializable {
 
         Resultado<Jardim> resultado;
 
-        if (isAtualizacao()) {
+        if (antigo != null) {
             resultado = repo.atualizarJardim(antigo.getId(), nome, descricao);
         } else {
 
@@ -109,7 +101,6 @@ public class ManterJardim implements Initializable {
 
     private boolean camposSaoValidos() {
         String nome = tfNome.getText();
-        String descricao = taDescricao.getText();
         Alert alert;
 
         if (nome.isEmpty() || nome.isBlank()) {
@@ -118,19 +109,12 @@ public class ManterJardim implements Initializable {
             return false;
         }
 
-        if (descricao.isEmpty() || descricao.isBlank()) {
-            alert = new Alert(AlertType.ERROR, "Descrição inválida.");
-            alert.showAndWait();
-            return false;
-        }
-
-
         return true;
     }
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        if (isAtualizacao()) {
+        if (antigo != null) {
             tfNome.setText(antigo.getNome());
             taDescricao.setText(antigo.getDescricao());
 

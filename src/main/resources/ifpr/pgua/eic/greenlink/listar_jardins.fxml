@@ -12,7 +12,7 @@
    <center>
       <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="800.0" spacing="10.0">
          <children>
-            <ListView fx:id="lstJardins" prefHeight="595.0" />
+            <ListView fx:id="lstJardins" onMouseClicked="#atualizarJardim" prefHeight="595.0" />
          </children>
          <padding>
             <Insets bottom="10.0" left="10.0" right="10.0" top="10.0" />

@@ -26,6 +26,7 @@ public class ListarJardins implements Initializable {
     @FXML
     void cadastrarJardim(ActionEvent e) {
         App.pushScreen("MANTERJARDIM");
+        /* FIXME: lista atualizando antes de retornar para essa tela */
         atualizarLista();
     }
 
@@ -35,6 +36,7 @@ public class ListarJardins implements Initializable {
             App.pushScreen("MANTERJARDIM",
                     o -> new ManterJardim(repo, lstJardins.getSelectionModel().getSelectedItem()));
 
+            /* FIXME: lista atualizando antes de retornar para essa tela */
             atualizarLista();
         }
     }
@@ -43,6 +45,15 @@ public class ListarJardins implements Initializable {
         ArrayList<Jardim> lista = repo.listarJardins().comoSucesso().getObj();
         lstJardins.getItems().clear();
         lstJardins.getItems().addAll(lista);
+
+        System.out.println("Lista atualizada:");
+        for(Jardim j : lista) {
+            System.out.println("nome: " + j);
+            System.out.println("descricao: " + j.getDescricao());
+            System.out.println("---");
+        }
+
+        System.out.println();
     }
 
     @Override
