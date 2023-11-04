@@ -162,4 +162,25 @@ public class JDBCJardimDAO implements JardimDAO {
             return Resultado.erro(e.getMessage());
         }
     }
+   @Override
+    public Resultado<Jardim> buscarJardimPlanta(int plantaId) {
+        try (Connection con = fabrica.getConnection()) {
+
+            PreparedStatement pstm = con.prepareStatement("SELECT jardim_id FROM plantas WHERE id=?");
+            pstm.setInt(1, plantaId);
+
+            ResultSet rs = pstm.executeQuery();
+            rs.next();
+
+            /* NOTE: fabrica gera um numero limitado de conexoes */
+            rs.close();
+            pstm.close();
+            con.close();
+
+            return buscarPorId(rs.getInt("jardim_id"));
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
+    }
 }
