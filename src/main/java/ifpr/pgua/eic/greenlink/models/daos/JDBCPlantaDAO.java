@@ -14,7 +14,7 @@ import ifpr.pgua.eic.greenlink.utils.DBUtils;
 public class JDBCPlantaDAO implements PlantaDAO {
 
     private final String SELECT_SQL = "SELECT * FROM plantas";
-    private final String INSERT_SQL = "INSERT INTO plantas(id, nome, descricao, jardim_id) VALUES (?, ?, ?, ?)";
+    private final String INSERT_SQL = "INSERT INTO plantas(nome, descricao, jardim_id) VALUES (?, ?, ?)";
     private final String UPDATE_SQL = "UPDATE plantas SET nome=?, descricao=?, jardim_id=? WHERE id=?";
     private FabricaConexoes fabrica;
 
@@ -27,10 +27,9 @@ public class JDBCPlantaDAO implements PlantaDAO {
         try (Connection con = fabrica.getConnection()) {
             PreparedStatement pstm = con.prepareStatement(INSERT_SQL);
 
-            pstm.setInt(1, nova.getId());
-            pstm.setString(2, nova.getNome());
-            pstm.setString(3, nova.getDescricao());
-            pstm.setInt(4, nova.getJardim().getId());
+            pstm.setString(1, nova.getNome());
+            pstm.setString(2, nova.getDescricao());
+            pstm.setInt(3, nova.getJardim().getId());
 
             int valorRetorno = pstm.executeUpdate();
 
@@ -119,20 +118,59 @@ public class JDBCPlantaDAO implements PlantaDAO {
             return Resultado.sucesso("listagem com sucesso", lista);
 
         } catch (SQLException e) {
+            e.printStackTrace();
             return Resultado.erro(e.getMessage());
         }
     }
 
     @Override
     public Resultado<Planta> buscarPorId(int id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
+        try (Connection con = fabrica.getConnection()) {
+
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE id=?");
+            pstm.setInt(1, id);
+
+            ResultSet rs = pstm.executeQuery();
+
+            boolean sucesso = rs.next();
+
+            if (!sucesso) {
+                return Resultado.erro("Planta nao encontrada.");
+            }
+
+            String nome = rs.getString("nome");
+            String descricao = rs.getString("descricao");
+
+            return Resultado.sucesso("Planta encontrada!", new Planta(nome, descricao, null));
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
     }
 
     @Override
     public Resultado<Planta> buscarPorNome(String nome) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarPorNome'");
+        try (Connection con = fabrica.getConnection()) {
+
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE nome=?");
+            pstm.setString(1, nome);
+
+            ResultSet rs = pstm.executeQuery();
+
+            boolean sucesso = rs.next();
+
+            if (!sucesso) {
+                return Resultado.erro("Planta nao encontrada.");
+            }
+
+            int id = rs.getInt("id");
+            String descricao = rs.getString("descricao");
+
+            return Resultado.sucesso("Planta encontrada!", new Planta(id, nome, descricao, null));
+            
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
     }
 
 
