@@ -176,8 +176,24 @@ public class JDBCPlantaDAO implements PlantaDAO {
 
     @Override
     public Resultado<Planta> removerPlanta(Planta planta) {
-        // TODO Auto-generated method stub
-        return null;
+        final String DROPSQL = "DELETE from plantas WHERE id=?";
+
+        try (Connection con = fabrica.getConnection()) {
+            PreparedStatement pstm = con.prepareStatement(DROPSQL);
+            pstm.setInt(1, planta.getId());
+
+            int valorRetorno = pstm.executeUpdate();
+
+            if (valorRetorno > 1) {
+                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
+            }
+
+            return Resultado.sucesso("Planta removido com sucesso.", planta);
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
+
     }
 
 
