@@ -19,7 +19,7 @@ public class RepositorioJardins {
 
     }
 
-    public Resultado<ArrayList<Jardim>> listarJardins() throws RuntimeException {
+    public Resultado<ArrayList<Jardim>> listarJardins() {
         return dao.listarJardins();
     }
 
