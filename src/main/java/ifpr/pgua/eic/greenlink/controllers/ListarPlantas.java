@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import com.github.hugoperlin.results.Resultado;
+
 import ifpr.pgua.eic.greenlink.App;
 import ifpr.pgua.eic.greenlink.models.entities.Planta;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
@@ -11,7 +13,9 @@ import ifpr.pgua.eic.greenlink.models.repositories.RepositorioPlantas;
 import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ListView;
+import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
 
 public class ListarPlantas implements Initializable {
@@ -52,7 +56,16 @@ public class ListarPlantas implements Initializable {
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
         /* TODO: mostrar nome da planta e nome do jardim na mesma celula */
-        ArrayList<Planta> lista = repoPlantas.listarPlantas().comoSucesso().getObj();
+
+        Resultado<ArrayList<Planta>> listagemResultado = repoPlantas.listarPlantas();
+
+        if (listagemResultado.foiErro()) {
+            Alert alert = new Alert(AlertType.ERROR, listagemResultado.getMsg());
+            alert.showAndWait();
+            return;
+        }
+
+        ArrayList<Planta> lista = listagemResultado.comoSucesso().getObj();
         lstPlantas.getItems().addAll(lista);
     }
     
