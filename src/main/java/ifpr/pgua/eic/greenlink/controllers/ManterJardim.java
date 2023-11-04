@@ -73,7 +73,7 @@ public class ManterJardim implements Initializable {
         } else {
 
             if (repo.buscarporNome(nome).foiSucesso()) {
-                alert = new Alert(AlertType.ERROR, "Nome '" + nome + "' Já cadastrado");
+                alert = new Alert(AlertType.ERROR, "Jardim com nome '" + nome + "' Já cadastrado");
                 alert.showAndWait();
                 return;
             }
