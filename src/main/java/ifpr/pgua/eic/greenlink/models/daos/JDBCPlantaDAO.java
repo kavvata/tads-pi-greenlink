@@ -15,6 +15,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
 
     private final String SELECT_SQL = "SELECT * FROM plantas";
     private final String INSERT_SQL = "INSERT INTO plantas(id, nome, descricao, jardim_id) VALUES (?, ?, ?, ?)";
+    private final String UPDATE_SQL = "UPDATE plantas SET nome=?, descricao=?, jardim_id=? WHERE id=?";
     private FabricaConexoes fabrica;
 
     public JDBCPlantaDAO(FabricaConexoes fabrica) {
@@ -47,7 +48,34 @@ public class JDBCPlantaDAO implements PlantaDAO {
     }
 
     @Override
-    public Resultado<ArrayList<Planta>> listarPlantasJardim(int idJardim) throws RuntimeException {
+    public Resultado<Planta> atualizarPlanta(int id, Planta nova) {
+        try (Connection con = fabrica.getConnection()) {
+
+            PreparedStatement pstm = con.prepareStatement(UPDATE_SQL);
+
+            pstm.setString(1, nova.getNome());
+            pstm.setString(2, nova.getDescricao());
+            pstm.setInt(3, nova.getJardim().getId());
+
+            pstm.setInt(4, id);
+
+            int valorRetorno = pstm.executeUpdate();
+
+            if (valorRetorno > 1) {
+
+                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
+
+            }
+
+            return Resultado.sucesso("Jardim atualizado!", nova);
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
+    }
+
+    @Override
+    public Resultado<ArrayList<Planta>> listarPlantasJardim(int idJardim) {
         try (Connection con = fabrica.getConnection()) {
 
             PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE jardim_id=?");
@@ -69,6 +97,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
             return Resultado.erro(e.getMessage());
         }
     }
+
 
     @Override
     public Resultado<ArrayList<Planta>> listarTodasPlantas() {
@@ -95,22 +124,24 @@ public class JDBCPlantaDAO implements PlantaDAO {
     }
 
     @Override
+    public Resultado<Planta> buscarPorId(int id) {
+        // TODO Auto-generated method stub
+        throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
+    }
+
+    @Override
     public Resultado<Planta> buscarPorNome(String nome) {
         // TODO Auto-generated method stub
         throw new UnsupportedOperationException("Unimplemented method 'buscarPorNome'");
     }
 
-    @Override
-    public Resultado<Planta> atualizarPlanta(int id, Planta nova) {
-        // TODO Auto-generated method stub
-        return null;
-    }
 
     @Override
     public Resultado<Planta> removerPlanta(Planta planta) {
         // TODO Auto-generated method stub
         return null;
     }
+
 
 
 
