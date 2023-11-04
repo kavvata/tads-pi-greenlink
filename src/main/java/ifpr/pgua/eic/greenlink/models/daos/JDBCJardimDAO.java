@@ -133,7 +133,7 @@ public class JDBCJardimDAO implements JardimDAO {
             String nome = rs.getString("nome");
             String descricao = rs.getString("descricao");
 
-            return Resultado.sucesso(descricao, new Jardim(id, nome, descricao));
+            return Resultado.sucesso("Jardim encontrado!", new Jardim(id, nome, descricao));
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());
@@ -171,11 +171,6 @@ public class JDBCJardimDAO implements JardimDAO {
 
             ResultSet rs = pstm.executeQuery();
             rs.next();
-
-            /* NOTE: fabrica gera um numero limitado de conexoes */
-            rs.close();
-            pstm.close();
-            con.close();
 
             return buscarPorId(rs.getInt("jardim_id"));
 
