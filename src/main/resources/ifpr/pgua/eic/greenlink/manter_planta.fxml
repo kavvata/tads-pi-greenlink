@@ -41,7 +41,7 @@
             <ButtonBar prefHeight="40.0" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="4">
               <buttons>
                   <Button cancelButton="true" mnemonicParsing="false" onAction="#voltar" text="Voltar" />
-                  <Button fx:id="btAcao" defaultButton="true" mnemonicParsing="false" onAction="#cadastrar" text="Cadastrar" />
+                  <Button fx:id="btAcao" defaultButton="true" mnemonicParsing="false" onAction="#handleBtAcao" text="Cadastrar" />
               </buttons>
             </ButtonBar>
             <Button fx:id="btRemover" mnemonicParsing="false" onAction="#remover" text="Remover" visible="false" GridPane.rowIndex="4" />

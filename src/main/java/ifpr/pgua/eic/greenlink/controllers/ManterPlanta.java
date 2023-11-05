@@ -61,13 +61,20 @@ public class ManterPlanta implements Initializable {
         this.antiga = antiga;
     }
 
-    private boolean camposSaoValidos() {
+    private boolean isAtualizacao() {
+        return antiga != null ? true : false;
+    }
+
+    private void mostraErro(String msg) {
+        Alert alert = new Alert(AlertType.ERROR, msg);
+        alert.showAndWait();
+    }
+
+    private boolean validaCampos() {
         String nome = tfNome.getText();
-        Alert alert;
 
         if (nome.isEmpty() || nome.isBlank()) {
-            alert = new Alert(AlertType.ERROR, "Nome inválido.");
-            alert.showAndWait();
+            mostraErro("Nome inválido.");
             return false;
         }
 
@@ -76,9 +83,9 @@ public class ManterPlanta implements Initializable {
     }
 
     @FXML
-    void cadastrar(ActionEvent event) {
+    void handleBtAcao(ActionEvent event) {
 
-        if(!camposSaoValidos()) {
+        if(!validaCampos()) {
             return;
         }
 
@@ -86,30 +93,31 @@ public class ManterPlanta implements Initializable {
         Jardim jardim = cbJardins.getSelectionModel().getSelectedItem();
         String descricao = taDescricao.getText();
 
-        Alert alert;
-
         Resultado<Planta> resultado;
 
-        if (antiga != null) {
-            resultado = repoPlantas.atualizarPlanta(antiga.getId(), nome, descricao, jardim);
-        } else {
+        if (!isAtualizacao()) {
+
+            /* cadastra nova planta */
 
             if (repoPlantas.buscarPorNome(nome).foiSucesso()) {
-                alert = new Alert(AlertType.ERROR, "Planta com nome '" + nome + "' Já cadastrada");
-                alert.showAndWait();
+                mostraErro("Planta com nome '" + nome + "' Já cadastrada");
                 return;
             }
 
             resultado = repoPlantas.cadastrarPlanta(nome, descricao, jardim);
+        } else {
+
+            /* atualiza planta ja existente */
+
+            resultado = repoPlantas.atualizarPlanta(antiga.getId(), nome, descricao, jardim);
         }
 
         if (resultado.foiErro()) {
-            alert = new Alert(AlertType.ERROR, resultado.getMsg());
-            alert.showAndWait();
+            mostraErro(resultado.getMsg());
             return;
         }
 
-        alert = new Alert(AlertType.INFORMATION, resultado.getMsg());
+        Alert alert = new Alert(AlertType.INFORMATION, resultado.getMsg());
         alert.showAndWait();
 
         tfNome.clear();
@@ -149,7 +157,7 @@ public class ManterPlanta implements Initializable {
         ArrayList<Jardim> listaJardim = repoJardins.listarJardins().comoSucesso().getObj();
         cbJardins.getItems().addAll(listaJardim);
 
-        if (antiga != null) {
+        if (isAtualizacao()) {
             tfNome.setText(antiga.getNome());
             taDescricao.setText(antiga.getDescricao());
 

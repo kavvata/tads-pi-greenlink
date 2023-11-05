@@ -14,7 +14,7 @@ import ifpr.pgua.eic.greenlink.utils.DBUtils;
 public class JDBCJardimDAO implements JardimDAO {
 
     final String INSERT_SQL = "INSERT INTO jardins(nome,descricao) ";
-    final String SELECT_SQL = "SELECT * FROM  jardins ";
+    final String SELECT_SQL = "SELECT * FROM jardins ";
 
     private FabricaConexoes fabrica;
 
