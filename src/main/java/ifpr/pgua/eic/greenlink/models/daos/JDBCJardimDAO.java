@@ -14,7 +14,7 @@ import ifpr.pgua.eic.greenlink.utils.DBUtils;
 public class JDBCJardimDAO implements JardimDAO {
 
     final String INSERT_SQL = "INSERT INTO jardins(nome,descricao) ";
-    final String SELECT_SQL = "SELECT * FROM  jardins ";
+    final String SELECT_SQL = "SELECT * FROM jardins ";
 
     private FabricaConexoes fabrica;
 
@@ -133,7 +133,7 @@ public class JDBCJardimDAO implements JardimDAO {
             String nome = rs.getString("nome");
             String descricao = rs.getString("descricao");
 
-            return Resultado.sucesso(descricao, new Jardim(id, nome, descricao));
+            return Resultado.sucesso("Jardim encontrado!", new Jardim(id, nome, descricao));
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());
@@ -157,6 +157,22 @@ public class JDBCJardimDAO implements JardimDAO {
             String descricao = rs.getString("descricao");
 
             return Resultado.sucesso("jardim encontrado!", new Jardim(id, nome, descricao));
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
+    }
+   @Override
+    public Resultado<Jardim> buscarJardimPlanta(int plantaId) {
+        try (Connection con = fabrica.getConnection()) {
+
+            PreparedStatement pstm = con.prepareStatement("SELECT jardim_id FROM plantas WHERE id=?");
+            pstm.setInt(1, plantaId);
+
+            ResultSet rs = pstm.executeQuery();
+            rs.next();
+
+            return buscarPorId(rs.getInt("jardim_id"));
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());

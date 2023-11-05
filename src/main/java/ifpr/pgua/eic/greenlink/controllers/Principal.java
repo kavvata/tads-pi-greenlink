@@ -5,8 +5,13 @@ import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ButtonBar;
+import javafx.scene.control.Label;
 
 public class Principal {
+
+    @FXML
+    /* TODO */
+    Label lbNomeTela;
 
     @FXML
     private ButtonBar btAcoes;
@@ -23,7 +28,7 @@ public class Principal {
 
     @FXML
     void listarPlantas(ActionEvent event) {
-
+        App.changeScreenRegion("LISTARPLANTAS", BorderPaneRegion.CENTER);
     }
 
 }

@@ -33,6 +33,9 @@ public class ListarJardins implements Initializable {
     @FXML
     void atualizarJardim(MouseEvent e) {
         if (e.getClickCount() > 1) {
+
+            /* TODO: clique duplo para visualizar plantas e atividades do jardim */
+
             App.changeScreenRegion(
                     "MANTERJARDIM",
                     BorderPaneRegion.CENTER,

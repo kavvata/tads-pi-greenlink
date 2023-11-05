@@ -10,5 +10,5 @@ CREATE TABLE IF NOT EXISTS plantas (
     descricao TEXT    NOT NULL,
     jardim_id INT     NOT NULL,
 
-    FOREIGN KEY(jardim_id) REFERENCES jardim (id) 
+    FOREIGN KEY(jardim_id) REFERENCES jardins (id) 
 );

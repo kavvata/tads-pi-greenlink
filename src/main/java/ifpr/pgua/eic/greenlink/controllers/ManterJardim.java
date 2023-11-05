@@ -55,39 +55,60 @@ public class ManterJardim implements Initializable {
         this.antigo = antigo;
     }
 
-    @FXML
-    void cadastrar(ActionEvent event) {
+    private boolean isAtualizacao() {
+        return antigo != null ? true : false;
+    }
 
-        if (!camposSaoValidos()) {
+    private void mostraErro(String msg) {
+
+    }
+
+    private boolean validaCampos() {
+        String nome = tfNome.getText();
+
+        if (nome.isEmpty() || nome.isBlank()) {
+            mostraErro("Nome inválido.");
+            return false;
+        }
+
+        return true;
+    }
+
+    @FXML
+    void handleBtAcao(ActionEvent event) {
+
+        if (!validaCampos()) {
             return;
         }
 
         String nome = tfNome.getText();
         String descricao = taDescricao.getText();
-        Alert alert;
 
         Resultado<Jardim> resultado;
 
-        if (antigo != null) {
-            resultado = repo.atualizarJardim(antigo.getId(), nome, descricao);
-        } else {
+        if (!isAtualizacao()) {
+
+            /* cadastra novo jardim */
 
             if (repo.buscarporNome(nome).foiSucesso()) {
-                alert = new Alert(AlertType.ERROR, "Nome '" + nome + "' Já cadastrado");
-                alert.showAndWait();
+                mostraErro("Jardim com nome '" + nome + "' Já cadastrado");
                 return;
             }
 
             resultado = repo.cadastrarJardim(nome, descricao);
+        } else {
+
+            /* atualiza jardim ja existente */
+
+            resultado = repo.atualizarJardim(antigo.getId(), nome, descricao);
         }
 
         if (resultado.foiErro()) {
-            alert = new Alert(AlertType.ERROR, resultado.getMsg());
-            alert.showAndWait();
+            mostraErro(resultado.getMsg());
             return;
         }
 
-        alert = new Alert(AlertType.INFORMATION, resultado.getMsg());
+        Alert alert = new Alert(AlertType.INFORMATION, resultado.getMsg());
         alert.showAndWait();
 
         tfNome.clear();
@@ -97,6 +118,9 @@ public class ManterJardim implements Initializable {
 
     @FXML
     void remover(ActionEvent e) {
+
+        /* TODO: remover plantas e tarefas associadas */
+
         ButtonType btSim = new ButtonType("Remover");
         ButtonType btNao = new ButtonType("Cancelar");
 
@@ -125,22 +149,10 @@ public class ManterJardim implements Initializable {
         App.changeScreenRegion("LISTARJARDINS", BorderPaneRegion.CENTER);
     }
 
-    private boolean camposSaoValidos() {
-        String nome = tfNome.getText();
-        Alert alert;
-
-        if (nome.isEmpty() || nome.isBlank()) {
-            alert = new Alert(AlertType.ERROR, "Nome inválido.");
-            alert.showAndWait();
-            return false;
-        }
-
-        return true;
-    }
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        if (antigo != null) {
+        if (isAtualizacao()) {
             tfNome.setText(antigo.getNome());
             taDescricao.setText(antigo.getDescricao());
 
