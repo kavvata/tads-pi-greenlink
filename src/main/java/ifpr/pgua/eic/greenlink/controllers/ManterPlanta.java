@@ -149,12 +149,20 @@ public class ManterPlanta implements Initializable {
 
     @FXML
     void voltar(ActionEvent event) {
+        /* TODO: lembrar qual foi a ultima tela utilizada */
         App.changeScreenRegion("LISTARPLANTAS", BorderPaneRegion.CENTER);
     }
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        ArrayList<Jardim> listaJardim = repoJardins.listarJardins().comoSucesso().getObj();
+        Resultado<ArrayList<Jardim>> jardimResultado = repoJardins.listarJardins();
+
+        if (jardimResultado.foiErro()) {
+            mostraErro(jardimResultado.getMsg());
+            return;
+        }
+
+        ArrayList<Jardim> listaJardim = jardimResultado.comoSucesso().getObj();
         cbJardins.getItems().addAll(listaJardim);
 
         if (isAtualizacao()) {
