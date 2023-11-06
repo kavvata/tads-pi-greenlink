@@ -111,6 +111,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
         try (Connection con = fabrica.getConnection()) {
 
             PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " WHERE planta_id=? and feito=0");
+            pstm.setInt(1, idPlanta);
 
             ResultSet rs = pstm.executeQuery();
 
