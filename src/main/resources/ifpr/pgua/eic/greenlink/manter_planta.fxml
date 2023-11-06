@@ -58,6 +58,10 @@
             <ComboBox fx:id="cbJardins" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <ListView fx:id="lstTarefas" prefWidth="200.0" visible="false" VBox.vgrow="ALWAYS" />
+      <ListView fx:id="lstTarefas" onMouseClicked="#atualizarTarefa" VBox.vgrow="ALWAYS">
+         <placeholder>
+            <Label text="+ Clique duplo para criar uma nova Tarefa!" />
+         </placeholder>
+      </ListView>
    </children>
 </VBox>
