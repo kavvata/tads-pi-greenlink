@@ -19,11 +19,24 @@ public class RepositorioTarefas {
         this.plantaDAO = plantaDAO;
     }
 
+    private Resultado<ArrayList<Tarefa>> incluiPlantas(ArrayList<Tarefa> lista) {
+        for (Tarefa tarefa : lista) {
+            Resultado<Planta> resultado = plantaDAO.buscarPlantaTarefa(tarefa.getId());
+
+            if (resultado.foiErro()) {
+                return Resultado.erro(resultado.getMsg());
+            }
+
+            tarefa.setPlanta(resultado.comoSucesso().getObj());
+        }
+        return Resultado.sucesso("Plantas incluidas, listagem com sucesso!", lista);
+    }
+
     public Resultado<Tarefa> cadastrarTarefa(String nome, String descricao, Planta planta, LocalDate prazo) {
         return tarefaDAO.cadastrarTarefa(new Tarefa(nome, descricao, planta, prazo));
     }
 
-    public Resultado<Tarefa> atualizarTarefa(int id, String nome, String descricao, Planta planta, LocalDate prazo, boolean feito) {
+    public Resultado<Tarefa> atualizarTarefa(int id, String nome, String descricao, Planta planta, LocalDate prazo, boolean feito) { 
         return tarefaDAO.atualizarTarefa(id, new Tarefa(id, nome, descricao, planta, prazo, feito));
     }
 
@@ -45,6 +58,20 @@ public class RepositorioTarefas {
 
             tarefa.setPlanta(resultado.comoSucesso().getObj());
         }
+
+        return listagemResultado;
+    }
+
+    public  Resultado<ArrayList<Tarefa>> listaTarefasPlanta(int id) {
+        Resultado<ArrayList<Tarefa>> listagemResultado = tarefaDAO.listarTarefasPlanta(id);
+
+        if (listagemResultado.foiErro()) {
+            return listagemResultado;
+        }
+
+        ArrayList<Tarefa> lista = listagemResultado.comoSucesso().getObj();
+
+        listagemResultado = incluiPlantas(lista);
 
         return listagemResultado;
     }
