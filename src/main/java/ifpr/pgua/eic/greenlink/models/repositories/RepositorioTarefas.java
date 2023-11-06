@@ -37,7 +37,7 @@ public class RepositorioTarefas {
         ArrayList<Tarefa> lista = listagemResultado.comoSucesso().getObj();
 
         for (Tarefa tarefa : lista) {
-            Resultado<Planta> resultado = plantaDAO.buscarPorId(tarefa.getId());
+            Resultado<Planta> resultado = plantaDAO.buscarPlantaTarefa(tarefa.getId());
 
             if (resultado.foiErro()) {
                 return Resultado.erro(resultado.getMsg());
@@ -47,5 +47,15 @@ public class RepositorioTarefas {
         }
 
         return listagemResultado;
+    }
+
+    public Resultado<Tarefa> marcarFeito(Tarefa tarefa) {
+        tarefa.setFeito(true);
+
+        return tarefaDAO.atualizarTarefa(tarefa.getId(), tarefa);
+    }
+
+    public Resultado<Tarefa> removerTarefa(Tarefa tarefa) {
+        return tarefaDAO.removerTarefa(tarefa);
     }
 }
