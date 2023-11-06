@@ -84,6 +84,9 @@ public class ManterTarefa implements Initializable {
     void handleBtAcao(ActionEvent event) {
 
         if(!validaCampos()) {
+            if (dpPrazo.getValue() == null) {
+                mostraErro("Data inválida.");
+            }
             return;
         }
 
