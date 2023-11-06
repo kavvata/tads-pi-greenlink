@@ -74,10 +74,10 @@ public class JDBCJardimDAO implements JardimDAO {
 
     @Override
     public Resultado<Jardim> removerJardim(Jardim jardim) {
-        final String DROPSQL = "DELETE FROM jardins WHERE id = ?";
+        final String DELETE_SQL = "DELETE FROM jardins WHERE id = ?";
 
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(DROPSQL);
+            PreparedStatement pstm = con.prepareStatement(DELETE_SQL);
             pstm.setInt(1, jardim.getId());
 
             int valorRetorno = pstm.executeUpdate();
