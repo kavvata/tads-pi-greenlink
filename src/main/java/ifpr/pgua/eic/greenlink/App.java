@@ -57,7 +57,7 @@ public class App extends BaseAppNavigator {
         registraTela("LISTARJARDINS", new ScreenRegistryFXML(App.class, "listar_jardins.fxml", o -> new ListarJardins(repositorioJardins)));
         registraTela("MANTERJARDIM", new ScreenRegistryFXML(App.class, "manter_jardim.fxml", o -> new ManterJardim(repositorioJardins)));
 
-        registraTela("LISTARPLANTAS", new ScreenRegistryFXML(App.class, "listar_plantas.fxml", o -> new ListarPlantas(repositorioPlantas, repositorioJardins)));
+        registraTela("LISTARPLANTAS", new ScreenRegistryFXML(App.class, "listar_plantas.fxml", o -> new ListarPlantas(repositorioPlantas, repositorioTarefas, repositorioJardins)));
         registraTela("MANTERPLANTA", new ScreenRegistryFXML(App.class, "manter_planta.fxml", o -> new ManterPlanta(repositorioPlantas, repositorioJardins)));
 
         registraTela("LISTARTAREFAS", new ScreenRegistryFXML(App.class, "listar_tarefas.fxml", o -> new ListarTarefas(repositorioTarefas, repositorioPlantas)));
