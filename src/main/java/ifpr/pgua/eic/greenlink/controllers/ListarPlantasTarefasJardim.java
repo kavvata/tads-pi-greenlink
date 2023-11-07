@@ -116,10 +116,15 @@ public class ListarPlantasTarefasJardim implements Initializable {
         lbNome.setText(jardim.getNome());
 
         // gera cellFactory para o lstTarefas
-        lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(tarefa -> {
-            marcarFeito(tarefa);
-            atualizaListaTarefas();
-        }));
+        lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(
+            tarefa -> {
+                marcarFeito(tarefa);
+                atualizaListaTarefas();
+            },
+            tarefa -> {
+                return tarefa.getNome() + " - " + tarefa.getPrazo().toString();
+            }
+        ));
 
         // puxa lista de plantas
         Resultado<ArrayList<Planta>> plantasResultado = repoPlantas.listarPlantasJardim(jardim.getId());

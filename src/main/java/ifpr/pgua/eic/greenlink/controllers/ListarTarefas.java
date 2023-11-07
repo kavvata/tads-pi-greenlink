@@ -63,10 +63,15 @@ public class ListarTarefas implements Initializable {
             return;
         }
 
-        lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(tarefa -> {
-            marcarFeito(tarefa);
-            atualizarLista();
-        }));
+        lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(
+            tarefa -> {
+                marcarFeito(tarefa);
+                atualizarLista();
+            },
+            tarefa -> {
+                return tarefa.getNome() + " - " + tarefa.getPrazo().toString();
+            }
+        ));
 
         ArrayList<Tarefa> lista = listagemResultado.comoSucesso().getObj();
         lstTarefas.getItems().addAll(lista);

@@ -213,10 +213,15 @@ public class ManterPlanta implements Initializable {
 
             lstTarefas.getItems().addAll(tarefasResultado.comoSucesso().getObj());
 
-            lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(t -> {
-                marcarFeito(t);
-                atualizarLista();
-            }));
+            lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(
+                t -> {
+                    marcarFeito(t);
+                    atualizarLista();
+                },
+                t -> {
+                    return t.getNome() + " - " + t.getPrazo().toString();
+                }
+            ));
 
             btAcao.setText("Atualizar");
             btRemover.setVisible(true);

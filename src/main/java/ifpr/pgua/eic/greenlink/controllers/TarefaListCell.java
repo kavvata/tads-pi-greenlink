@@ -10,10 +10,11 @@ import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.cell.CheckBoxListCell;
 import javafx.util.Callback;
+import javafx.util.StringConverter;
 
 public class TarefaListCell {
 
-    public static Callback<ListView<Tarefa>, ListCell<Tarefa>> geraCellFactory(Consumer<Tarefa> marcarFeito) {
+    public static Callback<ListView<Tarefa>, ListCell<Tarefa>> geraCellFactory(Consumer<Tarefa> marcarFeito, Callback<Tarefa, String> toString) {
 
         Callback<Tarefa, ObservableValue<Boolean>> acaoCheckBox = new Callback<>() {
 
@@ -31,7 +32,19 @@ public class TarefaListCell {
                 return observable;
             }
         };
+        StringConverter<Tarefa> converter = new StringConverter<Tarefa>() {
+
+            @Override
+            public Tarefa fromString(String arg0) {
+                return null;
+            }
+
+            @Override
+            public String toString(Tarefa t) {
+                return toString.call(t);
+            }
             
-        return CheckBoxListCell.forListView(acaoCheckBox);
+        };
+        return CheckBoxListCell.forListView(acaoCheckBox, converter);
     }
 }
