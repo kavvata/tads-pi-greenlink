@@ -157,11 +157,7 @@ public class ManterTarefa implements Initializable {
             dpPrazo.setValue(antiga.getPrazo());
 
             for (int i = 0; i < lista.size(); i++) {
-                System.out.println("planta chave: " +antiga.getPlanta().getId());
-                System.out.println("planta atual: " + lista.get(i).getId());
-
                 if (lista.get(i).getId() == antiga.getPlanta().getId()) {
-                    System.out.println("achou!");
                     cbPlantas.getSelectionModel().select(i);
                     break;
                 }
