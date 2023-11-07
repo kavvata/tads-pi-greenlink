@@ -13,9 +13,9 @@ import javafx.util.Callback;
 
 public class TarefaListCell {
 
-    public static Callback<ListView<Tarefa>, ListCell<Tarefa>> geraCellFactory(Consumer<Tarefa> onMarcarFeito) {
+    public static Callback<ListView<Tarefa>, ListCell<Tarefa>> geraCellFactory(Consumer<Tarefa> marcarFeito) {
 
-        Callback<Tarefa, ObservableValue<Boolean>> onListarTarefas = new Callback<>() {
+        Callback<Tarefa, ObservableValue<Boolean>> acaoCheckBox = new Callback<>() {
 
             @Override
             public ObservableValue<Boolean> call(Tarefa tarefa) {
@@ -24,14 +24,14 @@ public class TarefaListCell {
 
                 observable.addListener((obs, antigo, novo) -> {
                     if (novo) {
-                        onMarcarFeito.accept(tarefa);
+                        marcarFeito.accept(tarefa);
                     }
                 });
 
                 return observable;
             }
         };
-
-        return CheckBoxListCell.forListView(onListarTarefas);
+            
+        return CheckBoxListCell.forListView(acaoCheckBox);
     }
 }
