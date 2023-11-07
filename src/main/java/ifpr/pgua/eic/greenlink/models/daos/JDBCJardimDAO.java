@@ -14,7 +14,7 @@ import ifpr.pgua.eic.greenlink.utils.DBUtils;
 public class JDBCJardimDAO implements JardimDAO {
 
     final String INSERT_SQL = "INSERT INTO jardins(nome,descricao) ";
-    final String SELECT_SQL = "SELECT * FROM jardins ";
+    final String SELECT_SQL = "SELECT * FROM jardins WHERE ativo=1";
 
     private FabricaConexoes fabrica;
 
@@ -49,6 +49,28 @@ public class JDBCJardimDAO implements JardimDAO {
     }
 
     @Override
+    public Resultado<Jardim> atualizarJardim(int id, Jardim novo) {
+        try (Connection con = fabrica.getConnection()) {
+            PreparedStatement pstm = con.prepareStatement("UPDATE jardins SET nome=?, descricao=? WHERE id=?");
+
+            pstm.setString(1, novo.getNome());
+            pstm.setString(2, novo.getDescricao());
+            pstm.setInt(3, id);
+
+            int valorRetorno = pstm.executeUpdate();
+
+            if (valorRetorno > 1) {
+                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
+            }
+
+            return Resultado.sucesso("Jardim atualizado!", novo);
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
+    }
+
+    @Override
     public Resultado<ArrayList<Jardim>> listarJardins() {
         try (Connection con = fabrica.getConnection()) {
             PreparedStatement pstm = con.prepareStatement(SELECT_SQL);
@@ -73,53 +95,10 @@ public class JDBCJardimDAO implements JardimDAO {
     }
 
     @Override
-    public Resultado<Jardim> removerJardim(Jardim jardim) {
-        final String DELETE_SQL = "DELETE FROM jardins WHERE id = ?";
-
-        try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(DELETE_SQL);
-            pstm.setInt(1, jardim.getId());
-
-            int valorRetorno = pstm.executeUpdate();
-
-            if (valorRetorno > 1) {
-                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
-            }
-
-            return Resultado.sucesso("Jardim removido com sucesso.", jardim);
-
-        } catch (SQLException e) {
-            return Resultado.erro(e.getMessage());
-        }
-    }
-
-    @Override
-    public Resultado<Jardim> atualizarJardim(int id, Jardim novo) {
-        try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement("UPDATE jardins SET nome=?, descricao=? WHERE id=?");
-
-            pstm.setString(1, novo.getNome());
-            pstm.setString(2, novo.getDescricao());
-            pstm.setInt(3, id);
-
-            int valorRetorno = pstm.executeUpdate();
-
-            if (valorRetorno > 1) {
-                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
-            }
-
-            return Resultado.sucesso("Jardim atualizado!", novo);
-
-        } catch (SQLException e) {
-            return Resultado.erro(e.getMessage());
-        }
-    }
-
-    @Override
     public Resultado<Jardim> buscarPorId(int id) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE id=?");
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND id=?");
             pstm.setInt(1, id);
 
             ResultSet rs = pstm.executeQuery();
@@ -142,7 +121,7 @@ public class JDBCJardimDAO implements JardimDAO {
     public Resultado<Jardim> buscarPorNome(String nome) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE nome=?");
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
             pstm.setString(1, nome);
 
             ResultSet rs = pstm.executeQuery();
@@ -173,6 +152,27 @@ public class JDBCJardimDAO implements JardimDAO {
             rs.next();
 
             return buscarPorId(rs.getInt("jardim_id"));
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
+    }
+
+    @Override
+    public Resultado<Jardim> removerJardim(Jardim jardim) {
+        final String DELETE_SQL = "UPDATE jardins SET ativo=0 WHERE id = ?";
+
+        try (Connection con = fabrica.getConnection()) {
+            PreparedStatement pstm = con.prepareStatement(DELETE_SQL);
+            pstm.setInt(1, jardim.getId());
+
+            int valorRetorno = pstm.executeUpdate();
+
+            if (valorRetorno > 1) {
+                return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
+            }
+
+            return Resultado.sucesso("Jardim removido com sucesso.", jardim);
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());

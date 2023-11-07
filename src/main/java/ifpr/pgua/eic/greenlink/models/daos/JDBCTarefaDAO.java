@@ -16,7 +16,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
 
     final String INSERT_SQL = "INSERT INTO tarefas(nome, descricao, planta_id, prazo) VALUES (?,?,?,?)";
     final String UPDATE_SQL = "UPDATE tarefas SET nome=?, descricao=?, planta_id=?, prazo=?, feito=? WHERE id=?";
-    final String SELECT_SQL = "SELECT * FROM tarefas";
+    final String SELECT_SQL = "SELECT * FROM tarefas WHERE ativo=1";
 
     FabricaConexoes fabrica;
 
@@ -82,7 +82,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
     public Resultado<ArrayList<Tarefa>> listarTodasTarefas() {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " WHERE feito=0");
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND feito=0");
 
             ResultSet rs = pstm.executeQuery();
 
@@ -110,7 +110,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
     public Resultado<ArrayList<Tarefa>> listarTarefasPlanta(int idPlanta) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " WHERE planta_id=? and feito=0");
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND planta_id=? AND feito=0");
             pstm.setInt(1, idPlanta);
 
             ResultSet rs = pstm.executeQuery();
@@ -137,7 +137,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
 
     @Override
     public Resultado<Tarefa> removerTarefa(Tarefa tarefa) {
-        final String DELETE_SQL = "DELETE FROM tarefas WHERE id = ?";
+        final String DELETE_SQL = "UPDATE tarefas SET ativo=0 WHERE id = ?";
 
         try (Connection con = fabrica.getConnection()) {
             
