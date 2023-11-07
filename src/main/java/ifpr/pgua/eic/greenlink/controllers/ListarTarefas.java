@@ -69,7 +69,12 @@ public class ListarTarefas implements Initializable {
                 atualizarLista();
             },
             tarefa -> {
-                return tarefa.getNome() + " - " + tarefa.getPrazo().toString();
+                String str = "";
+                str += tarefa.getNome() + " - ";
+                str += tarefa.getPlanta().getNome() + " - ";
+                str += tarefa.getPrazo().toString();
+
+                return str;
             }
         ));
 
