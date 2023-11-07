@@ -20,8 +20,8 @@
    <children>
       <GridPane prefWidth="780.0" vgap="10.0">
          <columnConstraints>
-            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="382.0" minWidth="10.0" percentWidth="20.0" prefWidth="148.0" />
-            <ColumnConstraints hgrow="SOMETIMES" maxWidth="633.0" minWidth="10.0" percentWidth="80.0" prefWidth="632.0" />
+            <ColumnConstraints halignment="RIGHT" hgrow="SOMETIMES" maxWidth="382.0" minWidth="10.0" percentWidth="12.0" prefWidth="148.0" />
+            <ColumnConstraints hgrow="SOMETIMES" maxWidth="633.0" minWidth="10.0" percentWidth="88.0" prefWidth="632.0" />
          </columnConstraints>
          <rowConstraints>
             <RowConstraints minHeight="10.0" prefHeight="30.0" vgrow="SOMETIMES" />
@@ -58,7 +58,7 @@
             <ComboBox fx:id="cbJardins" prefWidth="200.0" GridPane.columnIndex="1" GridPane.rowIndex="1" />
          </children>
       </GridPane>
-      <ListView fx:id="lstTarefas" onMouseClicked="#atualizarTarefa" VBox.vgrow="ALWAYS">
+      <ListView fx:id="lstTarefas" onMouseClicked="#atualizarTarefa" visible="false" VBox.vgrow="ALWAYS">
          <placeholder>
             <Label text="+ Clique duplo para criar uma nova Tarefa!" />
          </placeholder>
