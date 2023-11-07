@@ -45,7 +45,9 @@ public class ManterTarefa implements Initializable {
     private DatePicker dpPrazo;
 
     @FXML
-    private TextArea taDescricao; @FXML
+    private TextArea taDescricao; 
+
+    @FXML
     private TextField tfNome;
 
     public ManterTarefa(RepositorioTarefas repoTarefas, RepositorioPlantas repoPlantas) {
@@ -167,6 +169,7 @@ public class ManterTarefa implements Initializable {
             btRemover.setVisible(true);
         } else {
             cbPlantas.getSelectionModel().select(0);
+            dpPrazo.setValue(LocalDate.now());
         }
     }
 }
