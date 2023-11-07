@@ -13,10 +13,8 @@ import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
-import javafx.util.Callback;
 
 public class ListarJardins implements Initializable {
     @FXML
@@ -39,50 +37,21 @@ public class ListarJardins implements Initializable {
     @FXML
     void cadastrarJardim(ActionEvent e) {
         App.changeScreenRegion("MANTERJARDIM", BorderPaneRegion.CENTER);
-        atualizarLista();
     }
 
     @FXML
     void atualizarJardim(MouseEvent e) {
         if (e.getClickCount() > 1) {
-
-            /* TODO: clique duplo para visualizar plantas e atividades do jardim */
-
             App.changeScreenRegion(
                     "LISTARPLANTASTAREFASJARDIM",
                     BorderPaneRegion.CENTER,
                     o -> new ListarPlantasTarefasJardim(lstJardins.getSelectionModel().getSelectedItem(), repo, repoPlantas, repoTarefas)
             );
-
-            atualizarLista();
         }
-    }
-
-    private void atualizarLista() {
-        ArrayList<Jardim> lista = repo.listarJardins().comoSucesso().getObj();
-        lstJardins.getItems().clear();
-        lstJardins.getItems().addAll(lista);
     }
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-
-        // lstJardins.setCellFactory(new Callback<ListView<Jardim>,ListCell<Jardim>>() {
-        //     @Override
-        //     public ListCell<Jardim> call(ListView<Jardim> arg0) {
-        //         // XXX Auto-generated method stub
-        //         return new ListCell<Jardim>(){
-        //             @Override
-        //             protected void updateItem(Jardim jardim, boolean arg1) {
-        //                 if (jardim != null) {
-        //                     setText(jardim.getNome()+"zzz");
-
-        //                 }
-        //             }
-        //         };
-        //     }
-        // });
-
         ArrayList<Jardim> lista = repo.listarJardins().comoSucesso().getObj();
         lstJardins.getItems().addAll(lista);
     }
