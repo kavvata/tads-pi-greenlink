@@ -15,9 +15,11 @@ import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
+import javafx.util.Callback;
 
 public class ListarPlantas implements Initializable {
 
@@ -58,7 +60,22 @@ public class ListarPlantas implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        /* TODO: mostrar nome da planta e nome do jardim na mesma celula */
+        lstPlantas.setCellFactory(new Callback<ListView<Planta>, ListCell<Planta>>() {
+            @Override 
+            public ListCell<Planta> call(ListView<Planta> arg0) {
+                return new ListCell<Planta>() {
+                    @Override
+                    protected void updateItem(Planta p, boolean vazio) {
+                        super.updateItem(p, vazio);
+                        if (vazio || p == null) {
+                            setText(null);
+                        } else {
+                            setText(p.getNome() + " - " + p.getJardim().getNome());
+                        }
+                    }
+                };
+            }
+        });
 
         Resultado<ArrayList<Planta>> listagemResultado = repoPlantas.listarPlantas();
 
