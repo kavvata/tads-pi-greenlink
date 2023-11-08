@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.util.ArrayList;
 
@@ -29,7 +30,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
     @Override
     public Resultado<Tarefa> cadastrarTarefa(Tarefa nova) {
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(INSERT_SQL);
+            PreparedStatement pstm = con.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
 
             pstm.setString(1, nova.getNome());
             pstm.setString(2, nova.getDescricao());
@@ -71,8 +72,6 @@ public class JDBCTarefaDAO implements TarefaDAO {
                 return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
             }
 
-            nova.setId(DBUtils.getLastId(pstm));
-
             return Resultado.sucesso("Tarefa atualizada", nova);
 
         } catch (SQLException e) {
@@ -84,7 +83,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
     public Resultado<ArrayList<Tarefa>> listarTodasTarefas() {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement("call mostrar_tarefas_usuario(?)");
+            PreparedStatement pstm = con.prepareStatement("call listar_tarefas_usuario(?)");
 
             if(!sessao.isLogado()) {
                 return Resultado.erro("Sessao expirou! faca login novamente.");
@@ -119,7 +118,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
     public Resultado<ArrayList<Tarefa>> listarTarefasPlanta(int idPlanta) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement("call mostrar_tarefas_planta(?)");
+            PreparedStatement pstm = con.prepareStatement("call listar_tarefas_planta(?)");
             pstm.setInt(1, idPlanta);
 
             ResultSet rs = pstm.executeQuery();
@@ -148,7 +147,7 @@ public class JDBCTarefaDAO implements TarefaDAO {
     public Resultado<ArrayList<Tarefa>> listarTarefasJardim(int idJardim) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement("call mostrar_tarefas_jardim(?)");
+            PreparedStatement pstm = con.prepareStatement("call listar_tarefas_jardim(?)");
             pstm.setInt(1, idJardim);
 
             ResultSet rs = pstm.executeQuery();

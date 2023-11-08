@@ -130,7 +130,8 @@ public class JDBCJardimDAO implements JardimDAO {
     public Resultado<Jardim> buscarPorNome(String nome) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
+            //                       buscar_jardim_nome(varchar nome, int usuario_id)
+            PreparedStatement pstm = con.prepareStatement("call buscar_jardim_nome(?,?)");
             pstm.setString(1, nome);
 
             ResultSet rs = pstm.executeQuery();

@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.github.hugoperlin.results.Resultado;
@@ -29,7 +30,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
     @Override
     public Resultado<Planta> cadastrarPlanta(Planta nova) {
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(INSERT_SQL);
+            PreparedStatement pstm = con.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
 
             pstm.setString(1, nova.getNome());
             pstm.setString(2, nova.getDescricao());
@@ -106,7 +107,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<ArrayList<Planta>> listarTodasPlantas() {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement("call mostrar_plantas_usuario(?)");
+            PreparedStatement pstm = con.prepareStatement("call listar_plantas_usuario(?)");
 
             if(!sessao.isLogado()) {
                 return Resultado.erro("Sessao expirou! faca login novamente.");
@@ -194,6 +195,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<Planta> buscarPlantaTarefa(int idTarefa) {
         try (Connection con = fabrica.getConnection()) {
 
+            /* FIXME */
             PreparedStatement pstm = con.prepareStatement("SELECT planta_id FROM tarefas WHERE id=?");
             pstm.setInt(1, idTarefa);
 
