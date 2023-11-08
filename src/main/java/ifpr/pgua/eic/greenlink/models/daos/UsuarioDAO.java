@@ -6,6 +6,5 @@ import ifpr.pgua.eic.greenlink.models.entities.Usuario;
 
 public interface UsuarioDAO {
     public Resultado<Usuario> cadastrarUsuario(Usuario novo);
-    public Resultado<Usuario> buscarPorId(int id);
-    public Resultado<Usuario> buscarPorNome(String nome);
+    public Resultado<Usuario> autenticaUsuario(Usuario usuario);
 }

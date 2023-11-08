@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import com.github.hugoperlin.results.Resultado;
 
 import ifpr.pgua.eic.greenlink.models.entities.Planta;
+import ifpr.pgua.eic.greenlink.models.sessao.Sessao;
 import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCPlantaDAO implements PlantaDAO {
@@ -16,10 +17,13 @@ public class JDBCPlantaDAO implements PlantaDAO {
     private final String SELECT_SQL = "SELECT * FROM plantas WHERE ativo=1";
     private final String INSERT_SQL = "INSERT INTO plantas(nome, descricao, jardim_id) VALUES (?, ?, ?)";
     private final String UPDATE_SQL = "UPDATE plantas SET nome=?, descricao=?, jardim_id=? WHERE id=?";
-    private FabricaConexoes fabrica;
 
-    public JDBCPlantaDAO(FabricaConexoes fabrica) {
+    private FabricaConexoes fabrica;
+    private Sessao sessao;
+
+    public JDBCPlantaDAO(FabricaConexoes fabrica, Sessao sessao) {
         this.fabrica = fabrica;
+        this.sessao = sessao;
     }
 
     @Override
@@ -102,7 +106,14 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<ArrayList<Planta>> listarTodasPlantas() {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL);
+            PreparedStatement pstm = con.prepareStatement("call mostrar_plantas_usuario(?)");
+
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sessao expirou! faca login novamente.");
+            }
+
+            pstm.setInt(1, sessao.getUsuario().getId());
+
             ResultSet rs = pstm.executeQuery();
 
             ArrayList<Planta> lista = new ArrayList<>();
@@ -152,8 +163,14 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<Planta> buscarPorNome(String nome) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
+            //                            buscar_planta_nome(varchar nome, int usuario_id)
+            PreparedStatement pstm = con.prepareStatement("call buscar_planta_nome(?, ?)");
+            if (!sessao.isLogado()) {
+                return Resultado.erro("Sessao expirou! faca login novamente.");
+            }
+
             pstm.setString(1, nome);
+            pstm.setInt(1, sessao.getUserId());
 
             ResultSet rs = pstm.executeQuery();
 

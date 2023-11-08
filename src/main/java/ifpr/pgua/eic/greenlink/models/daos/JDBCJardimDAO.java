@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import com.github.hugoperlin.results.Resultado;
 
 import ifpr.pgua.eic.greenlink.models.entities.Jardim;
+import ifpr.pgua.eic.greenlink.models.sessao.Sessao;
 import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCJardimDAO implements JardimDAO {
@@ -17,9 +18,11 @@ public class JDBCJardimDAO implements JardimDAO {
     final String SELECT_SQL = "SELECT * FROM jardins WHERE ativo=1";
 
     private FabricaConexoes fabrica;
+    private Sessao sessao;
 
-    public JDBCJardimDAO(FabricaConexoes fabrica) {
+    public JDBCJardimDAO(FabricaConexoes fabrica, Sessao sessao) {
         this.fabrica = fabrica;
+        this.sessao = sessao;
     }
 
     @Override
@@ -73,7 +76,13 @@ public class JDBCJardimDAO implements JardimDAO {
     @Override
     public Resultado<ArrayList<Jardim>> listarJardins() {
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL);
+            PreparedStatement pstm = con.prepareStatement("call listar_jardins_usuario(?)");
+
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sessao expirou! faca login novamente.");
+            }
+
+            pstm.setInt(1, sessao.getUserId());
 
             ResultSet rs = pstm.executeQuery();
 

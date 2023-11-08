@@ -4,6 +4,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
+import com.github.hugoperlin.results.Resultado;
+
 import ifpr.pgua.eic.greenlink.App;
 import ifpr.pgua.eic.greenlink.models.entities.Jardim;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
@@ -52,7 +54,14 @@ public class ListarJardins implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        ArrayList<Jardim> lista = repo.listarJardins().comoSucesso().getObj();
+        Resultado<ArrayList<Jardim>> listagemResultado = repo.listarJardins();
+
+        if (listagemResultado.foiErro()) {
+            System.out.println(listagemResultado.getMsg());
+            return;
+        }
+
+        ArrayList<Jardim> lista = listagemResultado.comoSucesso().getObj();
         lstJardins.getItems().addAll(lista);
     }
 

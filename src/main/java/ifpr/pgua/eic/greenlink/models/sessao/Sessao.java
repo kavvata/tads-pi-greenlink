@@ -1,10 +1,4 @@
 package ifpr.pgua.eic.greenlink.models.sessao;
-
-import java.nio.charset.StandardCharsets;
-import java.security.MessageDigest;
-import java.security.NoSuchAlgorithmException;
-import java.security.SecureRandom;
-
 import ifpr.pgua.eic.greenlink.models.entities.Usuario;
 
 public class Sessao {
@@ -24,6 +18,10 @@ public class Sessao {
         return usuario.getId();
     }
 
+    public boolean isLogado() {
+        return usuario != null ? true : false;
+    }
+
     public static Sessao getInstance() {
         if (instance == null) {
             instance = new Sessao();
@@ -34,24 +32,11 @@ public class Sessao {
     }
 
     public static String geraHash(String senha) {
-        /*
-         * Referencia: https://www.baeldung.com/java-password-hashing
-         */
-        try {
-            SecureRandom r = new SecureRandom();
-            byte[] salt = new byte[16];
-            r.nextBytes(salt);
-            String strSalt = new String(salt, StandardCharsets.UTF_8);
-
-            MessageDigest md = MessageDigest.getInstance("SHA-512");
-            byte[] hashed = md.digest(senha.getBytes(StandardCharsets.UTF_8));
-            String strHashed = new String(hashed, StandardCharsets.UTF_8);
-
-            return strSalt + ":" + strHashed;
-
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-            return "";
-        }
+        /* TODO */
+        return senha;
+    }
+    public static String geraHash(String senha, String strSalt) {
+        /* TODO */
+        return senha;
     }
 }

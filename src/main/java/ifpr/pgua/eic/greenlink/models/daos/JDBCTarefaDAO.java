@@ -10,18 +10,20 @@ import java.util.ArrayList;
 import com.github.hugoperlin.results.Resultado;
 
 import ifpr.pgua.eic.greenlink.models.entities.Tarefa;
+import ifpr.pgua.eic.greenlink.models.sessao.Sessao;
 import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCTarefaDAO implements TarefaDAO {
 
     final String INSERT_SQL = "INSERT INTO tarefas(nome, descricao, planta_id, prazo) VALUES (?,?,?,?)";
     final String UPDATE_SQL = "UPDATE tarefas SET nome=?, descricao=?, planta_id=?, prazo=?, feito=? WHERE id=?";
-    final String SELECT_SQL = "SELECT * FROM tarefas WHERE ativo=1";
 
-    FabricaConexoes fabrica;
+    private FabricaConexoes fabrica;
+    private Sessao sessao;
 
-    public JDBCTarefaDAO(FabricaConexoes fabrica) {
+    public JDBCTarefaDAO(FabricaConexoes fabrica, Sessao sessao) {
         this.fabrica = fabrica;
+        this.sessao = sessao;
     }
 
     @Override
@@ -82,7 +84,43 @@ public class JDBCTarefaDAO implements TarefaDAO {
     public Resultado<ArrayList<Tarefa>> listarTodasTarefas() {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND feito=0");
+            PreparedStatement pstm = con.prepareStatement("call mostrar_tarefas_usuario(?)");
+
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sessao expirou! faca login novamente.");
+            }
+
+            pstm.setInt(1, sessao.getUserId());
+
+            ResultSet rs = pstm.executeQuery();
+
+            ArrayList<Tarefa> lista = new ArrayList<>();
+
+            while(rs.next()) {
+                int id = rs.getInt("id");
+                String nome = rs.getString("nome");
+                String descricao = rs.getString("descricao");
+                String prazoString = rs.getString("prazo");
+                boolean feito = rs.getBoolean("feito");
+
+                /* NOTE: Categoria sera incluida em RepositorioTarefas */
+                lista.add(new Tarefa(id, nome, descricao, null, LocalDate.parse(prazoString), feito));
+
+            }
+
+            return Resultado.sucesso("Listagem com sucesso", lista);
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return Resultado.erro(e.getMessage());
+        }
+    }
+
+    @Override
+    public Resultado<ArrayList<Tarefa>> listarTarefasPlanta(int idPlanta) {
+        try (Connection con = fabrica.getConnection()) {
+
+            PreparedStatement pstm = con.prepareStatement("call mostrar_tarefas_planta(?)");
+            pstm.setInt(1, idPlanta);
 
             ResultSet rs = pstm.executeQuery();
 
@@ -107,11 +145,11 @@ public class JDBCTarefaDAO implements TarefaDAO {
     }
 
     @Override
-    public Resultado<ArrayList<Tarefa>> listarTarefasPlanta(int idPlanta) {
+    public Resultado<ArrayList<Tarefa>> listarTarefasJardim(int idJardim) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND planta_id=? AND feito=0");
-            pstm.setInt(1, idPlanta);
+            PreparedStatement pstm = con.prepareStatement("call mostrar_tarefas_jardim(?)");
+            pstm.setInt(1, idJardim);
 
             ResultSet rs = pstm.executeQuery();
 
@@ -155,4 +193,5 @@ public class JDBCTarefaDAO implements TarefaDAO {
             return Resultado.erro(e.getMessage());
         }
     }
+
 }

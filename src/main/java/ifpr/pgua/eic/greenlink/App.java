@@ -15,9 +15,11 @@ import ifpr.pgua.eic.greenlink.models.daos.JDBCTarefaDAO;
 import ifpr.pgua.eic.greenlink.models.daos.JardimDAO;
 import ifpr.pgua.eic.greenlink.models.daos.PlantaDAO;
 import ifpr.pgua.eic.greenlink.models.daos.TarefaDAO;
+import ifpr.pgua.eic.greenlink.models.entities.Usuario;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioPlantas;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioTarefas;
+import ifpr.pgua.eic.greenlink.models.sessao.Sessao;
 import io.github.hugoperlin.navigatorfx.BaseAppNavigator;
 import io.github.hugoperlin.navigatorfx.ScreenRegistryFXML;
 
@@ -27,9 +29,9 @@ import io.github.hugoperlin.navigatorfx.ScreenRegistryFXML;
 
 public class App extends BaseAppNavigator {
 
-    private JardimDAO jardimDAO = new JDBCJardimDAO(FabricaConexoes.getInstance());
-    private PlantaDAO plantaDAO = new JDBCPlantaDAO(FabricaConexoes.getInstance());
-    private TarefaDAO tarefaDAO = new JDBCTarefaDAO(FabricaConexoes.getInstance());
+    private JardimDAO jardimDAO = new JDBCJardimDAO(FabricaConexoes.getInstance(), Sessao.getInstance());
+    private PlantaDAO plantaDAO = new JDBCPlantaDAO(FabricaConexoes.getInstance(), Sessao.getInstance());
+    private TarefaDAO tarefaDAO = new JDBCTarefaDAO(FabricaConexoes.getInstance(), Sessao.getInstance());
 
     private RepositorioJardins repositorioJardins = new RepositorioJardins(jardimDAO);
     private RepositorioPlantas repositorioPlantas = new RepositorioPlantas(plantaDAO, jardimDAO);
@@ -52,6 +54,11 @@ public class App extends BaseAppNavigator {
 
     @Override
     public void registrarTelas() {
+
+        /* TODO: remover */
+        Sessao sessao = Sessao.getInstance();
+        sessao.setUsuario(new Usuario(1, "admin", "admin"));
+        
         registraTela("PRINCIPAL", new ScreenRegistryFXML(App.class, "principal.fxml", o -> new Principal()));
 
         registraTela("LISTARJARDINS", new ScreenRegistryFXML(App.class, "listar_jardins.fxml", o -> new ListarJardins(repositorioJardins, repositorioPlantas, repositorioTarefas)));

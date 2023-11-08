@@ -2,7 +2,9 @@ package ifpr.pgua.eic.greenlink.models.daos;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 
 import com.github.hugoperlin.results.Resultado;
 
@@ -27,15 +29,13 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
     public Resultado<Usuario> cadastrarUsuario(Usuario novo) {
         try (Connection con = fabrica.getConnection()) {
 
-            String hash = Sessao.geraHash(novo.getSenha());
-            if (hash.isEmpty() || hash.isBlank()) {
-                return Resultado.erro("Erro ao cadastrar senha. cheque logs");
-            }
-
-            PreparedStatement pstm = con.prepareStatement("INSERT INTO usuarios(nome, hash_senha) VALUES (?,?)");
+            PreparedStatement pstm = con.prepareStatement(
+                "INSERT INTO usuarios(nome, hash_senha) VALUES (?,?)", 
+                Statement.RETURN_GENERATED_KEYS
+            );
 
             pstm.setString(1, novo.getNome());
-            pstm.setString(2, hash);
+            pstm.setString(2, novo.getSenha());
 
             int valorRetorno = pstm.executeUpdate();
 
@@ -43,7 +43,8 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
                 return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
             }
 
-            DBUtils.getLastId(pstm);
+            int id = DBUtils.getLastId(pstm);
+            novo.setId(id);
 
             return Resultado.sucesso("usuario Cadastrado!", novo);
 
@@ -53,15 +54,31 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
     }
 
     @Override
-    public Resultado<Usuario> buscarPorId(int id) {
-        // XXX Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarPorId'");
-    }
+    public Resultado<Usuario> autenticaUsuario(Usuario usuario) {
+        try (Connection con = fabrica.getConnection()) {
 
-    @Override
-    public Resultado<Usuario> buscarPorNome(String nome) {
-        // XXX Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'buscarPorNome'");
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
+            pstm.setString(1, usuario.getNome());
 
+            ResultSet rs = pstm.executeQuery();
+
+            boolean sucesso = rs.next();
+
+            if(!sucesso) {
+                return Resultado.erro("Usuario nao encontrado");
+            }
+
+            int id = rs.getInt("id");
+            
+            if (!usuario.getSenha().equals(rs.getString("hash_senha"))) {
+                return Resultado.erro("Senha incorreta!");
+            }
+
+            sessao.setUsuario(new Usuario(id, usuario.getNome(), usuario.getSenha()));
+            return Resultado.sucesso("Autenticado com sucesso", sessao.getUsuario());
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
     }
 }
