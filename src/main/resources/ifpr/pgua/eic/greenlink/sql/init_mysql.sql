@@ -41,10 +41,10 @@ CREATE TABLE IF NOT EXISTS tarefas (
 -- Stored procedures
 --
 
--- mostrar todas as tarefas
+-- listar todas as tarefas
 DELIMITER $$
-drop procedure if exists mostrar_tarefas_usuario $$
-create procedure mostrar_tarefas_usuario(in usr_id int)
+drop procedure if exists listar_tarefas_usuario $$
+create procedure listar_tarefas_usuario(in usr_id int)
 begin
 SELECT
     t.id AS id,
@@ -59,10 +59,8 @@ JOIN plantas p ON
     t.planta_id = p.id
 JOIN jardins j ON
     p.jardim_id = j.id
-JOIN usuarios u ON
-    j.usuario_id = u.id
 WHERE
-    u.id = usr_id AND t.ativo = 1 AND t.feito=0;
+    j.usuario_id = usr_id AND t.ativo = 1 AND t.feito=0;
 END $$
 DELIMITER ;
 
@@ -112,10 +110,8 @@ FROM
     plantas p
 JOIN jardins j ON
     p.jardim_id = j.id
-JOIN usuarios u ON
-    j.usuario_id = u.id
 WHERE
-    u.id = usr_id AND p.ativo = 1;
+    j.usuario_id = usr_id AND p.ativo = 1;
 END $$
 DELIMITER ;
 
@@ -132,10 +128,8 @@ FROM
     plantas p
 JOIN jardins j ON
     p.jardim_id = j.id
-JOIN usuarios u ON
-    j.usuario_id = u.id
 WHERE
-    u.id = usr_id AND p.nome = p_nome AND p.ativo = 1;
+    j.usuario_id = usr_id AND p.nome = p_nome AND p.ativo = 1;
 END $$
 DELIMITER ;
 
@@ -155,12 +149,27 @@ WHERE
 END $$
 DELIMITER ;
 
+-- busca planta por nome
+DELIMITER $$
+drop procedure if exists busca_jardim_nome $$
+create procedure busca_jardim_nome(in j_nome varchar(50), in usr_id int)
+begin
+SELECT
+    j.id AS id,
+    j.descricao AS descricao
+FROM
+    jardins j
+WHERE
+    j.usuario_id = usr_id AND j.nome = j_nome AND p.ativo = 1;
+END $$
+DELIMITER ;
+
 --
 -- Povoando banco
 --
 
 insert
-    into usuarios(nome, senha) values ("admin", "admin");
+    into usuarios(nome, hash_senha) values ("admin", "admin");
 
 insert 
     into jardins(nome, descricao, usuario_id) 
