@@ -18,7 +18,7 @@ public class Principal {
 
     @FXML
     void listarAtividades(ActionEvent event) {
-
+        App.changeScreenRegion("LISTARTAREFAS", BorderPaneRegion.CENTER);
     }
 
     @FXML

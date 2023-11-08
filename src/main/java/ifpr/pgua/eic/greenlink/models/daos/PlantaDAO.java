@@ -14,6 +14,7 @@ public interface PlantaDAO {
     public Resultado<ArrayList<Planta>> listarTodasPlantas();
     public Resultado<Planta> buscarPorId(int id);
     public Resultado<Planta> buscarPorNome(String nome);
+    public Resultado<Planta> buscarPlantaTarefa(int idTarefa);
 
     public Resultado<Planta> removerPlanta(Planta planta);
 }

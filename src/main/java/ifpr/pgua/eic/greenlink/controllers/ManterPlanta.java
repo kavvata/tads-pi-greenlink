@@ -12,6 +12,7 @@ import ifpr.pgua.eic.greenlink.models.entities.Planta;
 import ifpr.pgua.eic.greenlink.models.entities.Tarefa;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioPlantas;
+import ifpr.pgua.eic.greenlink.models.repositories.RepositorioTarefas;
 import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -24,12 +25,16 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
+import javafx.scene.input.MouseEvent;
 
 public class ManterPlanta implements Initializable {
+
+    private String chaveTelaAnterior = "LISTARPLANTAS"; /* TODO */
 
     private Planta antiga;
     private RepositorioJardins repoJardins;
     private RepositorioPlantas repoPlantas;
+    private RepositorioTarefas repoTarefas;
 
 
     @FXML
@@ -55,8 +60,9 @@ public class ManterPlanta implements Initializable {
         this.repoJardins = repoJardins;
     }
 
-    public ManterPlanta(RepositorioPlantas repoPlantas, RepositorioJardins repoJardins, Planta antiga) {
+    public ManterPlanta(RepositorioPlantas repoPlantas, RepositorioTarefas repoTarefas, RepositorioJardins repoJardins, Planta antiga) {
         this.repoPlantas = repoPlantas;
+        this.repoTarefas = repoTarefas;
         this.repoJardins = repoJardins;
         this.antiga = antiga;
     }
@@ -79,6 +85,22 @@ public class ManterPlanta implements Initializable {
         }
 
         return true;
+
+    }
+
+    private void marcarFeito(Tarefa tarefa) {
+        repoTarefas.marcarFeito(tarefa);
+    }
+
+    private void atualizarLista() {
+        Resultado<ArrayList<Tarefa>> tarefasResultado = repoTarefas.listaTarefasPlanta(antiga.getId());
+
+        if (tarefasResultado.foiErro()) {
+            mostraErro(tarefasResultado.getMsg());
+        }
+
+        lstTarefas.getItems().clear();
+        lstTarefas.getItems().addAll(tarefasResultado.comoSucesso().getObj());
 
     }
 
@@ -148,9 +170,14 @@ public class ManterPlanta implements Initializable {
     }
 
     @FXML
+    void atualizarTarefa(MouseEvent event) {
+        System.out.println("atualizarTarefa nao implementado!");
+    }
+
+    @FXML
     void voltar(ActionEvent event) {
         /* TODO: lembrar qual foi a ultima tela utilizada */
-        App.changeScreenRegion("LISTARPLANTAS", BorderPaneRegion.CENTER);
+        App.changeScreenRegion(chaveTelaAnterior, BorderPaneRegion.CENTER);
     }
 
     @Override
@@ -178,8 +205,27 @@ public class ManterPlanta implements Initializable {
                 }
             }
 
+            Resultado<ArrayList<Tarefa>> tarefasResultado = repoTarefas.listaTarefasPlanta(antiga.getId());
+
+            if (tarefasResultado.foiErro()) {
+                mostraErro(tarefasResultado.getMsg());
+            }
+
+            lstTarefas.getItems().addAll(tarefasResultado.comoSucesso().getObj());
+
+            lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(
+                t -> {
+                    marcarFeito(t);
+                    atualizarLista();
+                },
+                t -> {
+                    return t.getNome() + " - " + t.getPrazo().toString();
+                }
+            ));
+
             btAcao.setText("Atualizar");
             btRemover.setVisible(true);
+            lstTarefas.setVisible(true);
         } else {
             cbJardins.getSelectionModel().select(0);
         }

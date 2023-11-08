@@ -13,7 +13,7 @@ import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCPlantaDAO implements PlantaDAO {
 
-    private final String SELECT_SQL = "SELECT * FROM plantas";
+    private final String SELECT_SQL = "SELECT * FROM plantas WHERE ativo=1";
     private final String INSERT_SQL = "INSERT INTO plantas(nome, descricao, jardim_id) VALUES (?, ?, ?)";
     private final String UPDATE_SQL = "UPDATE plantas SET nome=?, descricao=?, jardim_id=? WHERE id=?";
     private FabricaConexoes fabrica;
@@ -77,7 +77,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<ArrayList<Planta>> listarPlantasJardim(int idJardim) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE jardim_id=?");
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND jardim_id=?");
             pstm.setInt(1, idJardim);
             ResultSet rs = pstm.executeQuery();
 
@@ -127,7 +127,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<Planta> buscarPorId(int id) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE id=?");
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND id=?");
             pstm.setInt(1, id);
 
             ResultSet rs = pstm.executeQuery();
@@ -141,7 +141,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
             String nome = rs.getString("nome");
             String descricao = rs.getString("descricao");
 
-            return Resultado.sucesso("Planta encontrada!", new Planta(nome, descricao, null));
+            return Resultado.sucesso("Planta encontrada!", new Planta(id, nome, descricao, null));
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());
@@ -152,7 +152,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<Planta> buscarPorNome(String nome) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + "WHERE nome=?");
+            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
             pstm.setString(1, nome);
 
             ResultSet rs = pstm.executeQuery();
@@ -173,13 +173,29 @@ public class JDBCPlantaDAO implements PlantaDAO {
         }
     }
 
+    @Override
+    public Resultado<Planta> buscarPlantaTarefa(int idTarefa) {
+        try (Connection con = fabrica.getConnection()) {
 
+            PreparedStatement pstm = con.prepareStatement("SELECT planta_id FROM tarefas WHERE id=?");
+            pstm.setInt(1, idTarefa);
+
+            ResultSet rs = pstm.executeQuery();
+            rs.next();
+            
+            return buscarPorId(rs.getInt("planta_id"));
+
+        } catch (SQLException e) {
+            return Resultado.erro(e.getMessage());
+        }
+    }
+    
     @Override
     public Resultado<Planta> removerPlanta(Planta planta) {
-        final String DROPSQL = "DELETE from plantas WHERE id=?";
+        final String DELETESQL = "UPDATE plantas SET ativo=0 WHERE id=?";
 
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(DROPSQL);
+            PreparedStatement pstm = con.prepareStatement(DELETESQL);
             pstm.setInt(1, planta.getId());
 
             int valorRetorno = pstm.executeUpdate();
@@ -195,8 +211,4 @@ public class JDBCPlantaDAO implements PlantaDAO {
         }
 
     }
-
-
-
-
 }

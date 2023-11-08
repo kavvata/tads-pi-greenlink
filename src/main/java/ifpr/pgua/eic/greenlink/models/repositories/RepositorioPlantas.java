@@ -48,6 +48,28 @@ public class RepositorioPlantas {
         return listagemResultado;
     }
 
+    public Resultado<ArrayList<Planta>> listarPlantasJardim(int id) {
+        Resultado<ArrayList<Planta>> listagemResultado = plantaDAO.listarPlantasJardim(id);
+
+        if (listagemResultado.foiErro()) {
+            return listagemResultado;
+        }
+
+        ArrayList<Planta> lista = listagemResultado.comoSucesso().getObj();
+
+        for (Planta planta : lista) {
+            Resultado<Jardim> resultado = jardimDAO.buscarJardimPlanta(planta.getId());
+
+            if (resultado.foiErro()) {
+                return Resultado.erro(resultado.getMsg());
+            }
+
+            planta.setJardim(resultado.comoSucesso().getObj());
+        }
+
+        return listagemResultado;
+    }
+
     public Resultado<Planta> buscarPorNome(String nome) {
         Resultado<Planta> resultado = plantaDAO.buscarPorNome(nome);
 
@@ -72,5 +94,6 @@ public class RepositorioPlantas {
     public Resultado<Planta> removerPlanta(Planta planta) {
         return plantaDAO.removerPlanta(planta);
     }
+
 
 }
