@@ -125,7 +125,7 @@ public class ListarPlantasTarefasJardim implements Initializable {
                 String str = "";
                 str += tarefa.getNome() + " - ";
                 str += tarefa.getPlanta().getNome() + " - ";
-                str += tarefa.getPrazo().toString();
+                str += "<" +tarefa.getPrazo().toString() + ">";
 
                 return str;
             }
