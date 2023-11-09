@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Arrays;
 
 import com.github.hugoperlin.results.Resultado;
 
@@ -30,12 +31,20 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
         try (Connection con = fabrica.getConnection()) {
 
             PreparedStatement pstm = con.prepareStatement(
-                "INSERT INTO usuarios(nome, hash_senha) VALUES (?,?)", 
+                "INSERT INTO usuarios(nome, salt, hash) VALUES (?,?,?)", 
                 Statement.RETURN_GENERATED_KEYS
             );
 
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sua sessao expirou! faça login novamente");
+            }
+
+            byte[] salt = Sessao.geraSalt();
+            byte[] hash = Sessao.geraHash(novo.getSenha(), salt);
+
             pstm.setString(1, novo.getNome());
-            pstm.setString(2, novo.getSenha());
+            pstm.setBytes(2, salt);
+            pstm.setBytes(3, hash);
 
             int valorRetorno = pstm.executeUpdate();
 
@@ -57,6 +66,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
     public Resultado<Usuario> autenticaUsuario(Usuario usuario) {
         try (Connection con = fabrica.getConnection()) {
 
+            /* TODO:funcao compara_hash(in varbinary hash) */
             PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
             pstm.setString(1, usuario.getNome());
 
@@ -69,8 +79,10 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
             }
 
             int id = rs.getInt("id");
-            
-            if (!usuario.getSenha().equals(rs.getString("hash_senha"))) {
+            byte[] salt = rs.getBytes("salt");
+            byte[] hash = Sessao.geraHash(usuario.getSenha(), salt);
+
+            if (!Arrays.equals(rs.getBytes("hash"), hash)) {
                 return Resultado.erro("Senha incorreta!");
             }
 
