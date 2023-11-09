@@ -29,7 +29,7 @@ import javafx.scene.input.MouseEvent;
 
 public class ManterPlanta implements Initializable {
 
-    private String chaveTelaAnterior = "LISTARPLANTAS"; /* TODO */
+    private String telaAnterior = "LISTARPLANTAS";
 
     private Planta antiga;
     private RepositorioJardins repoJardins;
@@ -66,6 +66,11 @@ public class ManterPlanta implements Initializable {
         this.repoJardins = repoJardins;
         this.antiga = antiga;
     }
+
+    public void setTelaAnterior(String telaAnterior) {
+        this.telaAnterior = telaAnterior;
+    }
+
 
     private boolean isAtualizacao() {
         return antiga != null ? true : false;
@@ -172,10 +177,21 @@ public class ManterPlanta implements Initializable {
     @FXML
     void atualizarTarefa(MouseEvent event) {
         if (event.getClickCount() > 1) {
+
+            /*
+             * Muda o conteudo principal para 'manter tarefa'
+             * e muda a chave de tela anterior para essa
+             */
+            
             App.changeScreenRegion(
                 "MANTERTAREFA", 
-                BorderPaneRegion.CENTER,
-                o -> new ManterTarefa(repoTarefas, repoPlantas, lstTarefas.getSelectionModel().getSelectedItem())
+                BorderPaneRegion.CENTER, o -> {
+                    ManterTarefa m = new ManterTarefa(repoTarefas, repoPlantas, 
+                        lstTarefas.getSelectionModel().getSelectedItem());
+
+                    m.setTelaAnterior("MANTERPLANTA");
+                    return m;
+                }
             );
         }
     }
@@ -183,7 +199,7 @@ public class ManterPlanta implements Initializable {
     @FXML
     void voltar(ActionEvent event) {
         /* TODO: lembrar qual foi a ultima tela utilizada */
-        App.changeScreenRegion(chaveTelaAnterior, BorderPaneRegion.CENTER);
+        App.changeScreenRegion(telaAnterior, BorderPaneRegion.CENTER);
     }
 
     @Override

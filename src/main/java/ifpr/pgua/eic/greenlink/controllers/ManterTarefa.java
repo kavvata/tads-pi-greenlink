@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 
 public class ManterTarefa implements Initializable {
+    private String telaAnterior;
 
     private Tarefa antiga;
 
@@ -59,6 +60,10 @@ public class ManterTarefa implements Initializable {
         this.repoTarefas = repoTarefas;
         this.repoPlantas = repoPlantas;
         this.antiga = antiga;
+    }
+
+    public void setTelaAnterior(String telaAnterior) {
+        this.telaAnterior = telaAnterior;
     }
 
     private boolean isAtualizacao() {
@@ -138,7 +143,7 @@ public class ManterTarefa implements Initializable {
 
     @FXML
     void voltar(ActionEvent event) {
-        App.changeScreenRegion("LISTARTAREFAS", BorderPaneRegion.CENTER);
+        App.changeScreenRegion(telaAnterior, BorderPaneRegion.CENTER);
     }
 
     @Override

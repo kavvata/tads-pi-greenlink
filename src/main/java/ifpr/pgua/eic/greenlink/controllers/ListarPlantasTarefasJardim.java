@@ -79,7 +79,11 @@ public class ListarPlantasTarefasJardim implements Initializable {
             App.changeScreenRegion(
                     "MANTERPLANTA",
                     BorderPaneRegion.CENTER,
-                    o -> new ManterPlanta(repoPlantas, repoTarefas, repoJardins, lstPlantas.getSelectionModel().getSelectedItem())
+                    o -> {
+                        ManterPlanta m = new ManterPlanta(repoPlantas, repoTarefas, repoJardins, lstPlantas.getSelectionModel().getSelectedItem());
+                        m.setTelaAnterior("LISTARPLANTASTAREFASJARDIM");
+                        return m;
+                    }
             );
 
         }
@@ -91,7 +95,13 @@ public class ListarPlantasTarefasJardim implements Initializable {
             App.changeScreenRegion(
                 "MANTERTAREFA", 
                 BorderPaneRegion.CENTER,
-                o -> new ManterTarefa(repoTarefas, repoPlantas, lstTarefas.getSelectionModel().getSelectedItem())
+                o -> {
+                    ManterTarefa m = new ManterTarefa(repoTarefas, repoPlantas, 
+                        lstTarefas.getSelectionModel().getSelectedItem());
+
+                    m.setTelaAnterior("LISTARPLANTASTAREFASJARDIM");
+                    return m;
+                }
             );
         }
 
