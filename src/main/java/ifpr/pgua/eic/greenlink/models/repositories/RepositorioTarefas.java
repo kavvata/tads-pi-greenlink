@@ -76,6 +76,20 @@ public class RepositorioTarefas {
         return listagemResultado;
     }
 
+    public Resultado<ArrayList<Tarefa>> listaTarefasJardim(int jardimId) {
+        Resultado<ArrayList<Tarefa>> listagemResultado = tarefaDAO.listarTarefasJardim(jardimId);
+
+        if (listagemResultado.foiErro()) {
+            return listagemResultado;
+        }
+
+        ArrayList<Tarefa> lista = listagemResultado.comoSucesso().getObj();
+
+        listagemResultado = incluiPlantas(lista);
+
+        return listagemResultado;
+    }
+
     public Resultado<Tarefa> marcarFeito(Tarefa tarefa) {
         tarefa.setFeito(true);
 

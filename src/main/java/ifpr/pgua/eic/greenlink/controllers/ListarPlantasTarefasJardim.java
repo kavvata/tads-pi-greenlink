@@ -2,7 +2,6 @@ package ifpr.pgua.eic.greenlink.controllers;
 
 import java.net.URL;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.ResourceBundle;
 
 import com.github.hugoperlin.results.Resultado;
@@ -58,19 +57,16 @@ public class ListarPlantasTarefasJardim implements Initializable {
     }
 
     private void atualizaListaTarefas() {
-        List<Planta> listaPlantas = lstPlantas.getItems();
-
         ArrayList<Tarefa> listaTarefas = new ArrayList<>();
 
-        for (Planta p : listaPlantas) {
-            Resultado<ArrayList<Tarefa>> tarefasResultado = repoTarefas.listaTarefasPlanta(p.getId());
+        Resultado<ArrayList<Tarefa>> tarefasResultado = repoTarefas.listaTarefasJardim(jardim.getId());
 
-            if (tarefasResultado.foiErro()) {
-                mostraErro(tarefasResultado.getMsg());
-            }
-            
+        if (tarefasResultado.foiErro()) {
+            mostraErro(tarefasResultado.getMsg());
+        } else {
             listaTarefas.addAll(tarefasResultado.comoSucesso().getObj());
         }
+
 
         lstTarefas.getItems().clear();
         lstTarefas.getItems().addAll(listaTarefas);
