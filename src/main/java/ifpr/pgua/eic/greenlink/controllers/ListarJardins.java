@@ -42,12 +42,22 @@ public class ListarJardins implements Initializable {
     }
 
     @FXML
-    void atualizarJardim(MouseEvent e) {
+    void listarPlantasTarefas(MouseEvent e) {
+        Jardim jardim;
+
         if (e.getClickCount() > 1) {
+
+            jardim = lstJardins.getSelectionModel().getSelectedItem();
+
+            if (jardim == null) {
+                cadastrarJardim(null);
+                return;
+            }
+
             App.changeScreenRegion(
                     "LISTARPLANTASTAREFASJARDIM",
                     BorderPaneRegion.CENTER,
-                    o -> new ListarPlantasTarefasJardim(lstJardins.getSelectionModel().getSelectedItem(), repo, repoPlantas, repoTarefas)
+                    o -> new ListarPlantasTarefasJardim(jardim, repo, repoPlantas, repoTarefas)
             );
         }
     }
@@ -62,6 +72,9 @@ public class ListarJardins implements Initializable {
         }
 
         ArrayList<Jardim> lista = listagemResultado.comoSucesso().getObj();
+        if (lista.size() == 0) {
+            
+        }
         lstJardins.getItems().addAll(lista);
     }
 
