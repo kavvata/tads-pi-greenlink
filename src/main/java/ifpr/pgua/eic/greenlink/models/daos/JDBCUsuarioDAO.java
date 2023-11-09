@@ -35,10 +35,6 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
                 Statement.RETURN_GENERATED_KEYS
             );
 
-            if(!sessao.isLogado()) {
-                return Resultado.erro("Sua sessao expirou! faça login novamente");
-            }
-
             byte[] salt = Sessao.geraSalt();
             byte[] hash = Sessao.geraHash(novo.getSenha(), salt);
 
@@ -55,7 +51,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
             int id = DBUtils.getLastId(pstm);
             novo.setId(id);
 
-            return Resultado.sucesso("usuario Cadastrado!", novo);
+            return Resultado.sucesso("Usuario cadastrado com sucesso!", novo);
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());
