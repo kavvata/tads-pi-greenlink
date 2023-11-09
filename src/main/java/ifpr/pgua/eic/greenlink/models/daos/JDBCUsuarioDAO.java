@@ -64,6 +64,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
     @Override
     public Resultado<Usuario> autenticaUsuario(Usuario usuario) {
+        final String mensagemErro = "Nome de usuário ou senha incorretos.";
         try (Connection con = fabrica.getConnection()) {
 
             /* TODO:funcao compara_hash(in varbinary hash) */
@@ -75,7 +76,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
             boolean sucesso = rs.next();
 
             if(!sucesso) {
-                return Resultado.erro("Usuario nao encontrado");
+                return Resultado.erro(mensagemErro);
             }
 
             int id = rs.getInt("id");
@@ -83,7 +84,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
             byte[] hash = Sessao.geraHash(usuario.getSenha(), salt);
 
             if (!Arrays.equals(rs.getBytes("hash"), hash)) {
-                return Resultado.erro("Senha incorreta!");
+                return Resultado.erro(mensagemErro);
             }
 
             sessao.setUsuario(new Usuario(id, usuario.getNome(), usuario.getSenha()));
