@@ -1,6 +1,7 @@
 package ifpr.pgua.eic.greenlink;
 
 import ifpr.pgua.eic.greenlink.controllers.Autenticar;
+import ifpr.pgua.eic.greenlink.controllers.CadastrarUsuario;
 import ifpr.pgua.eic.greenlink.controllers.ListarJardins;
 import ifpr.pgua.eic.greenlink.controllers.ListarPlantas;
 import ifpr.pgua.eic.greenlink.controllers.ListarPlantasTarefasJardim;
@@ -63,6 +64,8 @@ public class App extends BaseAppNavigator {
         registraTela("PRINCIPAL", new ScreenRegistryFXML(App.class, "principal.fxml", o -> new Principal()));
 
         registraTela("AUTENTICAR", new ScreenRegistryFXML(App.class, "autenticar.fxml", o -> new Autenticar(repositorioUsuarios)));
+
+        registraTela("CADASTRARUSUARIO", new ScreenRegistryFXML(App.class, "cadastrar_usuario.fxml", o -> new CadastrarUsuario(repositorioUsuarios)));
 
         registraTela("LISTARJARDINS", new ScreenRegistryFXML(App.class, "listar_jardins.fxml", o -> new ListarJardins(repositorioJardins, repositorioPlantas, repositorioTarefas)));
 
