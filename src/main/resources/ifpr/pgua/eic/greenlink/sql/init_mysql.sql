@@ -116,7 +116,7 @@ WHERE
 END $$
 DELIMITER ;
 
--- busca planta por nome
+-- buscar planta por nome
 DELIMITER $$
 drop procedure if exists buscar_planta_nome $$
 create procedure buscar_planta_nome(in p_nome varchar(50), in usr_id int)
@@ -150,10 +150,10 @@ WHERE
 END $$
 DELIMITER ;
 
--- busca planta por nome
+-- buscar jardim por nome
 DELIMITER $$
-drop procedure if exists busca_jardim_nome $$
-create procedure busca_jardim_nome(in j_nome varchar(50), in usr_id int)
+drop procedure if exists buscar_jardim_nome $$
+create procedure buscar_jardim_nome(in j_nome varchar(50), in usr_id int)
 begin
 SELECT
     j.id AS id,
@@ -164,6 +164,44 @@ WHERE
     j.usuario_id = usr_id AND j.nome = j_nome AND p.ativo = 1;
 END $$
 DELIMITER ;
+
+-- buscar jardim por id de planta
+DELIMITER $$
+drop procedure if exists buscar_jardim_planta $$
+create procedure buscar_jardim_planta(in p_id int)
+begin
+SELECT
+    j.id AS id,
+    j.nome as nome,
+    j.descricao AS descricao
+FROM
+    jardins j
+JOIN plantas p ON 
+    p.jardim_id = j.id
+WHERE
+    p.id=p_id AND j.ativo = 1;
+END $$
+DELIMITER ;
+
+-- buscar planta por id de tarefa
+DELIMITER $$
+drop procedure if exists buscar_planta_tarefa $$
+create procedure buscar_planta_tarefa(in t_id int)
+begin
+SELECT
+    p.id as id,
+    p.nome as nome,
+    p.descricao as descricao,
+    p.jardim_id as jardim_id
+FROM
+    plantas p
+JOIN tarefas t ON 
+    t.planta_id = p.id
+WHERE
+    t.id=t_id AND p.ativo = 1;
+END $$
+DELIMITER ;
+
 
 --
 -- Povoando banco

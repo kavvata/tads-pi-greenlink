@@ -195,14 +195,21 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<Planta> buscarPlantaTarefa(int idTarefa) {
         try (Connection con = fabrica.getConnection()) {
 
-            /* FIXME */
-            PreparedStatement pstm = con.prepareStatement("SELECT planta_id FROM tarefas WHERE id=?");
+            PreparedStatement pstm = con.prepareStatement("call buscar_planta_tarefa(?)");
             pstm.setInt(1, idTarefa);
 
             ResultSet rs = pstm.executeQuery();
-            rs.next();
-            
-            return buscarPorId(rs.getInt("planta_id"));
+            boolean sucesso = rs.next();
+
+            if (!sucesso) {
+                return Resultado.erro("Planta nao encontrada.");
+            }
+
+            int id = rs.getInt("id");
+            String nome = rs.getString("nome");
+            String descricao = rs.getString("descricao");
+
+            return Resultado.sucesso("Planta da tarefa encontrada!", new Planta(id, nome, descricao, null));
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());
@@ -223,7 +230,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
                 return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
             }
 
-            return Resultado.sucesso("Planta removido com sucesso.", planta);
+            return Resultado.sucesso("Planta removida com sucesso.", planta);
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());

@@ -130,7 +130,7 @@ public class JDBCJardimDAO implements JardimDAO {
     public Resultado<Jardim> buscarPorNome(String nome) {
         try (Connection con = fabrica.getConnection()) {
 
-            //                       buscar_jardim_nome(varchar nome, int usuario_id)
+            //                           buscar_jardim_nome(varchar nome, int usuario_id)
             PreparedStatement pstm = con.prepareStatement("call buscar_jardim_nome(?,?)");
             pstm.setString(1, nome);
 
@@ -155,13 +155,21 @@ public class JDBCJardimDAO implements JardimDAO {
     public Resultado<Jardim> buscarJardimPlanta(int plantaId) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement("SELECT jardim_id FROM plantas WHERE id=?");
+            PreparedStatement pstm = con.prepareStatement("call buscar_jardim_planta(?)");
             pstm.setInt(1, plantaId);
 
             ResultSet rs = pstm.executeQuery();
-            rs.next();
+            boolean sucesso = rs.next();
 
-            return buscarPorId(rs.getInt("jardim_id"));
+            if (!sucesso) {
+                return Resultado.erro("Jardim nao encontrado.");
+            }
+
+            int id = rs.getInt("id");
+            String nome = rs.getString("nome");
+            String descricao = rs.getString("descricao");
+
+            return Resultado.sucesso("jardim da planta encontrado!", new Jardim(id, nome, descricao));
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());
