@@ -70,7 +70,7 @@ DELIMITER $$
 drop procedure if exists listar_tarefas_planta $$
 create procedure listar_tarefas_planta(in p_id int)
 begin
-    SELECT * FROM tarefas t where t.planta_id=p_id;
+    SELECT * FROM tarefas t where t.planta_id=p_id AND t.ativo=1 AND t.feito=0;
 END $$
 DELIMITER ;
 
