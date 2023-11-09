@@ -30,6 +30,22 @@ public class Autenticar {
     @FXML
     private TextField tfNome;
 
+    private boolean validaCampos() {
+        String nome = tfNome.getText();
+        String senha = pfSenha.getText();
+
+        if (nome.isEmpty() || nome.isBlank()) {
+            mostraErro("Por favor digite seu nome de usuário.");
+            return false;
+        }
+
+        if(senha.isBlank() || senha.isEmpty()) {
+            mostraErro("Por favor digite sua senha.");
+            return false;
+        }
+
+        return true;
+    }
     private void mostraErro(String msg) {
         Alert alert = new Alert(AlertType.ERROR, msg);
         alert.showAndWait();
@@ -37,6 +53,10 @@ public class Autenticar {
 
     @FXML
     void autenticar(ActionEvent event) {
+        if(!validaCampos()) {
+            return;
+        }
+
         String nome = tfNome.getText();
         String senha = pfSenha.getText();
 

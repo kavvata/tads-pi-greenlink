@@ -34,16 +34,32 @@ public class CadastrarUsuario {
         alert.showAndWait();
     }
 
-    private boolean senhasSaoIguais() {
+    private boolean validaCampos() {
+        String nome = tfNome.getText();
         String senha = pfSenha.getText();
         String confirmacao = pfConfirmaSenha.getText();
 
-        return senha.equals(confirmacao) ? true : false;
+        if (nome.isEmpty() || nome.isBlank()) {
+            mostraErro("Por favor digite seu nome de usuário.");
+            return false;
+        }
+
+        if (senha.isEmpty() || senha.isBlank()) {
+            mostraErro("Por favor digite sua senha.");
+            return false;
+        }
+
+        if (!senha.equals(confirmacao)) {
+            mostraErro("Senhas não coincidem. Certifique-se que foi digitado a mesma senha.");
+            return false;
+        }
+        
+        return true;
     }
+
     @FXML
     void cadastrar(ActionEvent event) {
-        if (!senhasSaoIguais()) {
-            mostraErro("Senhas não coincidem.");
+        if (!validaCampos()) {
             return;
         }
 
