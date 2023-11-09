@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.github.hugoperlin.results.Resultado;
@@ -14,7 +15,7 @@ import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCJardimDAO implements JardimDAO {
 
-    final String INSERT_SQL = "INSERT INTO jardins(nome,descricao) ";
+    final String INSERT_SQL = "INSERT INTO jardins(nome,descricao,usuario_id) VALUES (?,?,?)";
     final String SELECT_SQL = "SELECT * FROM jardins WHERE ativo=1";
 
     private FabricaConexoes fabrica;
@@ -28,22 +29,28 @@ public class JDBCJardimDAO implements JardimDAO {
     @Override
     public Resultado<Jardim> cadastrarJardim(Jardim novo) {
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(INSERT_SQL + "values (?, ?)");
+            PreparedStatement pstm = con.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
+
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sua sessão expirou, Faça login novamente!");
+            }
+
             pstm.setString(1, novo.getNome());
             pstm.setString(2, novo.getDescricao());
+            pstm.setInt(3, sessao.getUserId());
 
             int valorRetorno = pstm.executeUpdate();
 
             
 
-            if (valorRetorno > 1) {
+            if (valorRetorno != 1) {
 
                 return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
 
             }
 
             novo.setId(DBUtils.getLastId(pstm));
-
+            pstm.setString(1, novo.getNome());
             return Resultado.sucesso("Jardim cadastrado com sucesso!", novo);
 
         } catch(SQLException e) {
