@@ -54,6 +54,12 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
             return Resultado.sucesso("Usuario cadastrado com sucesso!", novo);
 
         } catch (SQLException e) {
+
+            if (e.getErrorCode() == 1062) { /* CODIGO DE ERRO SQL PARA VALOR DUPLICADO */
+                return Resultado.erro("Nome de usuário já cadastrado.");
+            }
+
+            System.out.println(e.getErrorCode()) ;
             return Resultado.erro(e.getMessage());
         }
     }
