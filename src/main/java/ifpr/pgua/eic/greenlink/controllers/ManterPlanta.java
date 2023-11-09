@@ -171,7 +171,13 @@ public class ManterPlanta implements Initializable {
 
     @FXML
     void atualizarTarefa(MouseEvent event) {
-        System.out.println("atualizarTarefa nao implementado!");
+        if (event.getClickCount() > 1) {
+            App.changeScreenRegion(
+                "MANTERTAREFA", 
+                BorderPaneRegion.CENTER,
+                o -> new ManterTarefa(repoTarefas, repoPlantas, lstTarefas.getSelectionModel().getSelectedItem())
+            );
+        }
     }
 
     @FXML
@@ -190,6 +196,13 @@ public class ManterPlanta implements Initializable {
         }
 
         ArrayList<Jardim> listaJardim = jardimResultado.comoSucesso().getObj();
+
+        if (listaJardim.size()  == 0) {
+            mostraErro("Para cadastrar uma planta, é necessário possuir pelo menos um jardim cadastrado.");
+            App.pushScreen("PRINCIPAL");
+            return;
+        }
+
         cbJardins.getItems().addAll(listaJardim);
 
         if (isAtualizacao()) {
