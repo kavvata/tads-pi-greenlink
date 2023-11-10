@@ -202,13 +202,40 @@ WHERE
 END $$
 DELIMITER ;
 
+---
+--- Triggers
+---
+
+DELIMITER $$
+drop trigger if exists remover_planta $$
+create trigger remover_planta before update on plantas
+for each row
+begin
+    if new.ativo = 0 then
+       update tarefas set ativo=0 where planta_id = new.id;
+    end if;
+END $$
+DELIMITER ;
+
+DELIMITER $$
+drop trigger if exists remover_jardim $$
+create trigger remover_jardim before update on jardins
+for each row
+begin
+    if new.ativo = 0 then
+       update plantas set ativo=0 where jardim_id = new.id;
+    end if;
+END $$
+DELIMITER ;
+
+-- TODO: implementar e duas funções.
 
 --
 -- Povoando banco
 --
 
 insert
-    into usuarios(nome, hash_senha) values ("admin", "admin");
+    into usuarios(nome, salt, hash) values ("admin", TODO, TODO);
 
 insert 
     into jardins(nome, descricao, usuario_id) 
@@ -243,8 +270,3 @@ values
     ("podar", "folhas secas", "2023-11-15", 7),
     ("jogar fora", "secou :(", "2023-11-06", 10),
     ("trocar terra", "colocar terra mais arenada", "2023-11-07", 6);
-
-
--- TODO: implementar duas triggers e duas funções.
-
--- mostrar todas as tarefas
