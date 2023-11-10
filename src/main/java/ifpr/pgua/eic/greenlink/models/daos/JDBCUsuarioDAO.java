@@ -69,7 +69,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
         final String mensagemErro = "Nome de usuário ou senha incorretos.";
         try (Connection con = fabrica.getConnection()) {
 
-            /* TODO:funcao compara_hash(in varbinary hash) */
+            /* TODO:funcao compara_hash(in varbinary hash) returns boolean */
             PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
             pstm.setString(1, usuario.getNome());
 
