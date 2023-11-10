@@ -234,8 +234,10 @@ DELIMITER ;
 -- Povoando banco
 --
 
-insert
-    into usuarios(nome, salt, hash) values ("admin", TODO, TODO);
+insert 
+    into usuarios(nome, salt, hash) 
+    values 
+    	("admin", X'5c85ca6f432379de7b12426cf74c50a2', X'816b81f23df9e82a15f9f1e503c8d1d86261b7b44808ff35');
 
 insert 
     into jardins(nome, descricao, usuario_id) 
