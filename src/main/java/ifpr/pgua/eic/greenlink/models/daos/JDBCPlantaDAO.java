@@ -4,11 +4,13 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.github.hugoperlin.results.Resultado;
 
 import ifpr.pgua.eic.greenlink.models.entities.Planta;
+import ifpr.pgua.eic.greenlink.models.sessao.Sessao;
 import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCPlantaDAO implements PlantaDAO {
@@ -16,16 +18,19 @@ public class JDBCPlantaDAO implements PlantaDAO {
     private final String SELECT_SQL = "SELECT * FROM plantas WHERE ativo=1";
     private final String INSERT_SQL = "INSERT INTO plantas(nome, descricao, jardim_id) VALUES (?, ?, ?)";
     private final String UPDATE_SQL = "UPDATE plantas SET nome=?, descricao=?, jardim_id=? WHERE id=?";
-    private FabricaConexoes fabrica;
 
-    public JDBCPlantaDAO(FabricaConexoes fabrica) {
+    private FabricaConexoes fabrica;
+    private Sessao sessao;
+
+    public JDBCPlantaDAO(FabricaConexoes fabrica, Sessao sessao) {
         this.fabrica = fabrica;
+        this.sessao = sessao;
     }
 
     @Override
     public Resultado<Planta> cadastrarPlanta(Planta nova) {
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(INSERT_SQL);
+            PreparedStatement pstm = con.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
 
             pstm.setString(1, nova.getNome());
             pstm.setString(2, nova.getDescricao());
@@ -102,7 +107,14 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<ArrayList<Planta>> listarTodasPlantas() {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL);
+            PreparedStatement pstm = con.prepareStatement("call listar_plantas_usuario(?)");
+
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sessao expirou! faca login novamente.");
+            }
+
+            pstm.setInt(1, sessao.getUsuario().getId());
+
             ResultSet rs = pstm.executeQuery();
 
             ArrayList<Planta> lista = new ArrayList<>();
@@ -152,8 +164,14 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<Planta> buscarPorNome(String nome) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
+            //                            buscar_planta_nome(varchar nome, int usuario_id)
+            PreparedStatement pstm = con.prepareStatement("call buscar_planta_nome(?, ?)");
+            if (!sessao.isLogado()) {
+                return Resultado.erro("Sessao expirou! faca login novamente.");
+            }
+
             pstm.setString(1, nome);
+            pstm.setInt(1, sessao.getUserId());
 
             ResultSet rs = pstm.executeQuery();
 
@@ -177,13 +195,21 @@ public class JDBCPlantaDAO implements PlantaDAO {
     public Resultado<Planta> buscarPlantaTarefa(int idTarefa) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement("SELECT planta_id FROM tarefas WHERE id=?");
+            PreparedStatement pstm = con.prepareStatement("call buscar_planta_tarefa(?)");
             pstm.setInt(1, idTarefa);
 
             ResultSet rs = pstm.executeQuery();
-            rs.next();
-            
-            return buscarPorId(rs.getInt("planta_id"));
+            boolean sucesso = rs.next();
+
+            if (!sucesso) {
+                return Resultado.erro("Planta nao encontrada.");
+            }
+
+            int id = rs.getInt("id");
+            String nome = rs.getString("nome");
+            String descricao = rs.getString("descricao");
+
+            return Resultado.sucesso("Planta da tarefa encontrada!", new Planta(id, nome, descricao, null));
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());
@@ -204,7 +230,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
                 return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
             }
 
-            return Resultado.sucesso("Planta removido com sucesso.", planta);
+            return Resultado.sucesso("Planta removida com sucesso.", planta);
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());

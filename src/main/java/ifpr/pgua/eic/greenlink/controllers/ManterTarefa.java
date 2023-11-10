@@ -26,6 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 
 public class ManterTarefa implements Initializable {
+    private String telaAnterior = "LISTARTAREFAS";
 
     private Tarefa antiga;
 
@@ -59,6 +60,10 @@ public class ManterTarefa implements Initializable {
         this.repoTarefas = repoTarefas;
         this.repoPlantas = repoPlantas;
         this.antiga = antiga;
+    }
+
+    public void setTelaAnterior(String telaAnterior) {
+        this.telaAnterior = telaAnterior;
     }
 
     private boolean isAtualizacao() {
@@ -138,7 +143,7 @@ public class ManterTarefa implements Initializable {
 
     @FXML
     void voltar(ActionEvent event) {
-        App.changeScreenRegion("LISTARTAREFAS", BorderPaneRegion.CENTER);
+        App.changeScreenRegion(telaAnterior, BorderPaneRegion.CENTER);
     }
 
     @Override
@@ -150,16 +155,23 @@ public class ManterTarefa implements Initializable {
             return;
         }
 
-        ArrayList<Planta> lista = listagemResultado.comoSucesso().getObj();
-        cbPlantas.getItems().addAll(lista);
+        ArrayList<Planta> plantas = listagemResultado.comoSucesso().getObj();
+
+        if (plantas.size() == 0) {
+            mostraErro("Para cadastrar uma tarefa, é necessário possuir pelo menos uma planta cadastrada.");
+            App.pushScreen("PRINCIPAL");
+            return;
+        }
+
+        cbPlantas.getItems().addAll(plantas);
 
         if(isAtualizacao()) {
             tfNome.setText(antiga.getNome());
             taDescricao.setText(antiga.getDescricao());
             dpPrazo.setValue(antiga.getPrazo());
 
-            for (int i = 0; i < lista.size(); i++) {
-                if (lista.get(i).getId() == antiga.getPlanta().getId()) {
+            for (int i = 0; i < plantas.size(); i++) {
+                if (plantas.get(i).getId() == antiga.getPlanta().getId()) {
                     cbPlantas.getSelectionModel().select(i);
                     break;
                 }

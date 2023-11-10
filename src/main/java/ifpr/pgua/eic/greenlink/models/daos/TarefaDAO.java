@@ -12,6 +12,7 @@ public interface TarefaDAO {
 
     public Resultado<ArrayList<Tarefa>> listarTodasTarefas();
     public Resultado<ArrayList<Tarefa>> listarTarefasPlanta(int idPlanta);
+    public Resultado<ArrayList<Tarefa>> listarTarefasJardim(int idJardim);
 
     public Resultado<Tarefa> removerTarefa(Tarefa tarefa);
 }

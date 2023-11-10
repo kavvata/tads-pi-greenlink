@@ -4,43 +4,53 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 
 import com.github.hugoperlin.results.Resultado;
 
 import ifpr.pgua.eic.greenlink.models.entities.Jardim;
+import ifpr.pgua.eic.greenlink.models.sessao.Sessao;
 import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCJardimDAO implements JardimDAO {
 
-    final String INSERT_SQL = "INSERT INTO jardins(nome,descricao) ";
+    final String INSERT_SQL = "INSERT INTO jardins(nome,descricao,usuario_id) VALUES (?,?,?)";
     final String SELECT_SQL = "SELECT * FROM jardins WHERE ativo=1";
 
     private FabricaConexoes fabrica;
+    private Sessao sessao;
 
-    public JDBCJardimDAO(FabricaConexoes fabrica) {
+    public JDBCJardimDAO(FabricaConexoes fabrica, Sessao sessao) {
         this.fabrica = fabrica;
+        this.sessao = sessao;
     }
 
     @Override
     public Resultado<Jardim> cadastrarJardim(Jardim novo) {
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(INSERT_SQL + "values (?, ?)");
+            PreparedStatement pstm = con.prepareStatement(INSERT_SQL, Statement.RETURN_GENERATED_KEYS);
+
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sua sessão expirou, Faça login novamente!");
+            }
+
             pstm.setString(1, novo.getNome());
             pstm.setString(2, novo.getDescricao());
+            pstm.setInt(3, sessao.getUserId());
 
             int valorRetorno = pstm.executeUpdate();
 
             
 
-            if (valorRetorno > 1) {
+            if (valorRetorno != 1) {
 
                 return Resultado.erro("Erro! mais de uma tabela alterada: " + valorRetorno + " tabelas alteradas.");
 
             }
 
             novo.setId(DBUtils.getLastId(pstm));
-
+            pstm.setString(1, novo.getNome());
             return Resultado.sucesso("Jardim cadastrado com sucesso!", novo);
 
         } catch(SQLException e) {
@@ -73,7 +83,13 @@ public class JDBCJardimDAO implements JardimDAO {
     @Override
     public Resultado<ArrayList<Jardim>> listarJardins() {
         try (Connection con = fabrica.getConnection()) {
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL);
+            PreparedStatement pstm = con.prepareStatement("call listar_jardins_usuario(?)");
+
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sessao expirou! faca login novamente.");
+            }
+
+            pstm.setInt(1, sessao.getUserId());
 
             ResultSet rs = pstm.executeQuery();
 
@@ -121,7 +137,8 @@ public class JDBCJardimDAO implements JardimDAO {
     public Resultado<Jardim> buscarPorNome(String nome) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
+            //                           buscar_jardim_nome(varchar nome, int usuario_id)
+            PreparedStatement pstm = con.prepareStatement("call buscar_jardim_nome(?,?)");
             pstm.setString(1, nome);
 
             ResultSet rs = pstm.executeQuery();
@@ -145,13 +162,21 @@ public class JDBCJardimDAO implements JardimDAO {
     public Resultado<Jardim> buscarJardimPlanta(int plantaId) {
         try (Connection con = fabrica.getConnection()) {
 
-            PreparedStatement pstm = con.prepareStatement("SELECT jardim_id FROM plantas WHERE id=?");
+            PreparedStatement pstm = con.prepareStatement("call buscar_jardim_planta(?)");
             pstm.setInt(1, plantaId);
 
             ResultSet rs = pstm.executeQuery();
-            rs.next();
+            boolean sucesso = rs.next();
 
-            return buscarPorId(rs.getInt("jardim_id"));
+            if (!sucesso) {
+                return Resultado.erro("Jardim nao encontrado.");
+            }
+
+            int id = rs.getInt("id");
+            String nome = rs.getString("nome");
+            String descricao = rs.getString("descricao");
+
+            return Resultado.sucesso("jardim da planta encontrado!", new Jardim(id, nome, descricao));
 
         } catch (SQLException e) {
             return Resultado.erro(e.getMessage());

@@ -7,7 +7,7 @@
 
 <VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ifpr.pgua.eic.greenlink.App">
    <children>
-      <ListView fx:id="lstJardins" onMouseClicked="#atualizarJardim" prefHeight="595.0">
+      <ListView fx:id="lstJardins" onMouseClicked="#listarPlantasTarefas" prefHeight="595.0">
          <placeholder>
             <Label text="+ Clique duplo para criar um novo Jardim!" />
          </placeholder>

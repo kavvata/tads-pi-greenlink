@@ -29,7 +29,7 @@ import javafx.scene.input.MouseEvent;
 
 public class ManterPlanta implements Initializable {
 
-    private String chaveTelaAnterior = "LISTARPLANTAS"; /* TODO */
+    private String telaAnterior = "LISTARPLANTAS";
 
     private Planta antiga;
     private RepositorioJardins repoJardins;
@@ -66,6 +66,11 @@ public class ManterPlanta implements Initializable {
         this.repoJardins = repoJardins;
         this.antiga = antiga;
     }
+
+    public void setTelaAnterior(String telaAnterior) {
+        this.telaAnterior = telaAnterior;
+    }
+
 
     private boolean isAtualizacao() {
         return antiga != null ? true : false;
@@ -171,13 +176,30 @@ public class ManterPlanta implements Initializable {
 
     @FXML
     void atualizarTarefa(MouseEvent event) {
-        System.out.println("atualizarTarefa nao implementado!");
+        if (event.getClickCount() > 1) {
+
+            /*
+             * Muda o conteudo principal para 'manter tarefa'
+             * e muda a chave de tela anterior para essa
+             */
+            
+            App.changeScreenRegion(
+                "MANTERTAREFA", 
+                BorderPaneRegion.CENTER, 
+                o -> {
+                    ManterTarefa m = new ManterTarefa(repoTarefas, repoPlantas, 
+                        lstTarefas.getSelectionModel().getSelectedItem());
+
+                    m.setTelaAnterior("MANTERPLANTA");
+                    return m;
+                }
+            );
+        }
     }
 
     @FXML
     void voltar(ActionEvent event) {
-        /* TODO: lembrar qual foi a ultima tela utilizada */
-        App.changeScreenRegion(chaveTelaAnterior, BorderPaneRegion.CENTER);
+        App.changeScreenRegion(telaAnterior, BorderPaneRegion.CENTER);
     }
 
     @Override
@@ -190,6 +212,13 @@ public class ManterPlanta implements Initializable {
         }
 
         ArrayList<Jardim> listaJardim = jardimResultado.comoSucesso().getObj();
+
+        if (listaJardim.size()  == 0) {
+            mostraErro("Para cadastrar uma planta, é necessário possuir pelo menos um jardim cadastrado.");
+            App.pushScreen("PRINCIPAL");
+            return;
+        }
+
         cbJardins.getItems().addAll(listaJardim);
 
         if (isAtualizacao()) {

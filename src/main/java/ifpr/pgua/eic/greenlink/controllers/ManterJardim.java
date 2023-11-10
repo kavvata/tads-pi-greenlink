@@ -119,8 +119,6 @@ public class ManterJardim implements Initializable {
     @FXML
     void remover(ActionEvent e) {
 
-        /* TODO: remover plantas e tarefas associadas */
-
         ButtonType btSim = new ButtonType("Remover");
         ButtonType btNao = new ButtonType("Cancelar");
 

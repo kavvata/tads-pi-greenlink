@@ -47,15 +47,7 @@ public class ListarPlantas implements Initializable {
                     BorderPaneRegion.CENTER,
                     o -> new ManterPlanta(repoPlantas, repoTarefas, repoJardins, lstPlantas.getSelectionModel().getSelectedItem())
             );
-
-            atualizarLista();
         }
-    }
-
-    private void atualizarLista() {
-        ArrayList<Planta> lista = repoPlantas.listarPlantas().comoSucesso().getObj();
-        lstPlantas.getItems().clear();
-        lstPlantas.getItems().addAll(lista);
     }
 
     @Override
