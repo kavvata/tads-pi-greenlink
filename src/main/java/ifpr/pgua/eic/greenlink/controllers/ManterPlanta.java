@@ -185,7 +185,8 @@ public class ManterPlanta implements Initializable {
             
             App.changeScreenRegion(
                 "MANTERTAREFA", 
-                BorderPaneRegion.CENTER, o -> {
+                BorderPaneRegion.CENTER, 
+                o -> {
                     ManterTarefa m = new ManterTarefa(repoTarefas, repoPlantas, 
                         lstTarefas.getSelectionModel().getSelectedItem());
 
@@ -198,7 +199,6 @@ public class ManterPlanta implements Initializable {
 
     @FXML
     void voltar(ActionEvent event) {
-        /* TODO: lembrar qual foi a ultima tela utilizada */
         App.changeScreenRegion(telaAnterior, BorderPaneRegion.CENTER);
     }
 

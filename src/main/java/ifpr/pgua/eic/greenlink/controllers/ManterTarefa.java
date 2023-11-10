@@ -26,7 +26,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.control.Alert.AlertType;
 
 public class ManterTarefa implements Initializable {
-    private String telaAnterior;
+    private String telaAnterior = "LISTARTAREFAS";
 
     private Tarefa antiga;
 
