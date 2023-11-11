@@ -13,14 +13,22 @@
     - Listar Atividades do Jardim.
 - **14/09/2023**
     - Feita a especificação dos seguintes casos de uso:
-    - Listar Todas as Plantas;
-    - Listar Todas as Atividades;
-    - Manter Jardins;
-    - Manter Plantas;
-    - Manter Atividades;
+        - Listar Todas as Plantas;
+        - Listar Todas as Atividades;
+        - Manter Jardins;
+        - Manter Plantas;
+        - Manter Atividades.
 - **04/11/2023**:
     - Começo do desenvolvimento do projeto.
     - Persistencia de objetos Jardim e Planta.
     - repositório, controllers e telas para listagem e cadastro de jardins.
     - repositório, controllers e telas pra listagem e cadastro de plantas.
     - script para criação do banco de dados em SQLite.
+- **11/11/2023**:
+    - Persistencia, repositório, controllers e telas para manter, listar e marcar Tarefas como feita.
+    - Tela para listagem de tarefas por planta.
+    - Tela de listagem de tarefas e plantas de um jardim.
+    - Migração do banco de sqlite para mysql.
+    - Implementação de persistência, repositório, telas e controllers para logar, cadastrar e autenticar usuário.
+    - Criação de stored procedures, triggers e funções para o banco;
+    - Bugfixes, refatoração, entre outros.
