@@ -60,7 +60,8 @@ public class ManterJardim implements Initializable {
     }
 
     private void mostraErro(String msg) {
-
+        Alert alert = new Alert(AlertType.ERROR, msg);
+        alert.showAndWait();
     }
 
     private boolean validaCampos() {
