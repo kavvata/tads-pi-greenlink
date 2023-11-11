@@ -210,11 +210,11 @@ DELIMITER ;
 
 DELIMITER $$
 drop function if exists compara_hash $$
-CREATE FUNCTION compara_hash(usr_name varchar(50), usr_hash varbinary(255)) RETURNS boolean
+CREATE FUNCTION compara_hash(usr_id int, usr_hash varbinary(255)) RETURNS boolean
 DETERMINISTIC
 BEGIN
     DECLARE chave varbinary(255);
-    SET chave = (SELECT u.hash FROM usuarios u WHERE u.nome=usr_name);
+    SET chave = (SELECT u.hash FROM usuarios u WHERE u.id=usr_id);
     IF usr_hash = chave THEN
         RETURN true;
     END IF;

@@ -15,7 +15,7 @@ import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCUsuarioDAO implements UsuarioDAO {
 
-    private final String SELECT_SQL = "SELECT * FROM usuarios WHERE ativo=1";
+    private final String SELECT_SQL = "SELECT id, nome, salt FROM usuarios WHERE ativo=1";
 
     private FabricaConexoes fabrica;
     private Sessao sessao;
@@ -69,7 +69,7 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
         final String mensagemErro = "Nome de usuário ou senha incorretos.";
         try (Connection con = fabrica.getConnection()) {
 
-            /* TODO:funcao compara_hash(in varbinary hash) returns boolean */
+            /* busca usuario por nome */
             PreparedStatement pstm = con.prepareStatement(SELECT_SQL + " AND nome=?");
             pstm.setString(1, usuario.getNome());
 
@@ -85,7 +85,14 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
             byte[] salt = rs.getBytes("salt");
             byte[] hash = Sessao.geraHash(usuario.getSenha(), salt);
 
-            if (!Arrays.equals(rs.getBytes("hash"), hash)) {
+            pstm = con.prepareStatement("SELECT compara_hash(?,?) as autenticado");
+            pstm.setInt(1, id);
+            pstm.setBytes(2, hash);
+
+            rs = pstm.executeQuery();
+            sucesso = rs.next();
+
+            if(!sucesso || !rs.getBoolean("autenticado")) {
                 return Resultado.erro(mensagemErro);
             }
 
