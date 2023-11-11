@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.Arrays;
 
 import com.github.hugoperlin.results.Resultado;
 
@@ -15,6 +14,7 @@ import ifpr.pgua.eic.greenlink.utils.DBUtils;
 
 public class JDBCUsuarioDAO implements UsuarioDAO {
 
+    private final int ERRO_FAILED_UNIQUE_CONSTRAINT = 1062;
     private final String SELECT_SQL = "SELECT id, nome, salt FROM usuarios WHERE ativo=1";
 
     private FabricaConexoes fabrica;
@@ -55,11 +55,10 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
         } catch (SQLException e) {
 
-            if (e.getErrorCode() == 1062) { /* CODIGO DE ERRO SQL PARA VALOR DUPLICADO */
+            if (e.getErrorCode() == ERRO_FAILED_UNIQUE_CONSTRAINT) {
                 return Resultado.erro("Nome de usuário já cadastrado.");
             }
 
-            System.out.println(e.getErrorCode()) ;
             return Resultado.erro(e.getMessage());
         }
     }
@@ -77,14 +76,19 @@ public class JDBCUsuarioDAO implements UsuarioDAO {
 
             boolean sucesso = rs.next();
 
+            /* nome de usuario nao cadastrado */
             if(!sucesso) {
                 return Resultado.erro(mensagemErro);
             }
 
             int id = rs.getInt("id");
+
+            /* gera hash da senha que o usuario digitou */
             byte[] salt = rs.getBytes("salt");
             byte[] hash = Sessao.geraHash(usuario.getSenha(), salt);
 
+
+            /* compara com a hash no banco: compara_hash(id INT, hash VARBINARY) -> BOOLEAN */
             pstm = con.prepareStatement("SELECT compara_hash(?,?) as autenticado");
             pstm.setInt(1, id);
             pstm.setBytes(2, hash);
