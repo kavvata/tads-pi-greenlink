@@ -57,13 +57,13 @@ public class RepositorioPlantas {
 
         ArrayList<Planta> lista = listagemResultado.comoSucesso().getObj();
 
+        Resultado<Jardim> resultado = jardimDAO.buscarPorId(id);
+
+        if (resultado.foiErro()) {
+            return Resultado.erro(resultado.getMsg());
+        }
+
         for (Planta planta : lista) {
-            Resultado<Jardim> resultado = jardimDAO.buscarJardimPlanta(planta.getId());
-
-            if (resultado.foiErro()) {
-                return Resultado.erro(resultado.getMsg());
-            }
-
             planta.setJardim(resultado.comoSucesso().getObj());
         }
 

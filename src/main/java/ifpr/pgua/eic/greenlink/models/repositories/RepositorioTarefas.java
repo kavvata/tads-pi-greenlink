@@ -71,7 +71,14 @@ public class RepositorioTarefas {
 
         ArrayList<Tarefa> lista = listagemResultado.comoSucesso().getObj();
 
-        listagemResultado = incluiPlantas(lista);
+        Resultado<Planta> resultado = plantaDAO.buscarPorId(id);
+        if (resultado.foiErro()) {
+            return Resultado.erro(resultado.getMsg());
+        }
+
+        for (Tarefa t : lista) {
+            t.setPlanta(resultado.comoSucesso().getObj());
+        }
 
         return listagemResultado;
     }
