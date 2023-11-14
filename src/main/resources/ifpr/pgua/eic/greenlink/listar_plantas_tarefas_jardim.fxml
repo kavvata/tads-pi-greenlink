@@ -24,7 +24,7 @@
       </HBox>
       <ListView fx:id="lstPlantas" onMouseClicked="#atualizarPlanta" VBox.vgrow="ALWAYS">
          <placeholder>
-            <Label text="+ Clique duplo para criar uma nova Planta!" />
+            <Label fx:id="lbPlaceholderPlantas" text="Carregando lista de plantas..." />
          </placeholder>
       </ListView>
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0">
@@ -34,7 +34,7 @@
       </HBox>
       <ListView fx:id="lstTarefas" onMouseClicked="#atualizarTarefa" VBox.vgrow="ALWAYS">
          <placeholder>
-            <Label text="+ Clique duplo para criar uma nova Tarefa!" />
+            <Label fx:id="lbPlaceholderTarefas" text="Carregando lista de tarefas..." />
          </placeholder>
       </ListView>
       <HBox alignment="TOP_RIGHT" prefHeight="100.0" prefWidth="200.0">

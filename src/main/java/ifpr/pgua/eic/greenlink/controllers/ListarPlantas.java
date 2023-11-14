@@ -12,9 +12,12 @@ import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioPlantas;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioTarefas;
 import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListCell;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Alert.AlertType;
@@ -25,6 +28,9 @@ public class ListarPlantas implements Initializable {
 
     @FXML
     ListView<Planta> lstPlantas;
+
+    @FXML
+    Label lbPlaceholder;
 
     private RepositorioPlantas repoPlantas;
     private RepositorioTarefas repoTarefas;
@@ -52,8 +58,9 @@ public class ListarPlantas implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
+        /* criação de cells para plantas com o nome dela e nome do jardim */
         lstPlantas.setCellFactory(new Callback<ListView<Planta>, ListCell<Planta>>() {
-            @Override 
+            @Override
             public ListCell<Planta> call(ListView<Planta> arg0) {
                 return new ListCell<Planta>() {
                     @Override
@@ -69,16 +76,31 @@ public class ListarPlantas implements Initializable {
             }
         });
 
-        Resultado<ArrayList<Planta>> listagemResultado = repoPlantas.listarPlantas();
+        /* task do javafx para inicializar a listview em outra thread */
+        Task<Void> task = new Task<Void>() {
 
-        if (listagemResultado.foiErro()) {
-            Alert alert = new Alert(AlertType.ERROR, listagemResultado.getMsg());
-            alert.showAndWait();
-            return;
-        }
+            @Override
+            protected Void call() throws Exception {
 
-        ArrayList<Planta> lista = listagemResultado.comoSucesso().getObj();
-        lstPlantas.getItems().addAll(lista);
+                /* gera lista de plantas */
+                Resultado<ArrayList<Planta>> listagemResultado = repoPlantas.listarPlantas();
+                if (listagemResultado.foiErro()) {
+                    Alert alert = new Alert(AlertType.ERROR, listagemResultado.getMsg());
+                    alert.showAndWait();
+                    return null;
+                }
+
+                ArrayList<Planta> lista = listagemResultado.comoSucesso().getObj();
+                /* muda o texto de 'carregando' para o de lista vazia */
+                if (lista.size() == 0) {
+                    Platform.runLater(() -> lbPlaceholder.setText("+ Clique duplo para criar nova planta!"));
+                }
+                lstPlantas.getItems().addAll(lista);
+                return null;
+            }
+        };
+
+        new Thread(task).start();
     }
     
 }

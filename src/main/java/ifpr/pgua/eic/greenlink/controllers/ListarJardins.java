@@ -12,15 +12,21 @@ import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioPlantas;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioTarefas;
 import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.input.MouseEvent;
 
 public class ListarJardins implements Initializable {
     @FXML
     ListView<Jardim> lstJardins;
+
+    @FXML
+    Label lbPlaceholder;
 
     private RepositorioJardins repo;
     private RepositorioPlantas repoPlantas;
@@ -64,18 +70,30 @@ public class ListarJardins implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        Resultado<ArrayList<Jardim>> listagemResultado = repo.listarJardins();
+        /* task do javafx para inicializar a listview em outra thread */
+        Task<Void> task = new Task<Void>() {
 
-        if (listagemResultado.foiErro()) {
-            System.out.println(listagemResultado.getMsg());
-            return;
-        }
+            @Override
+            protected Void call() throws Exception {
+                Resultado<ArrayList<Jardim>> listagemResultado = repo.listarJardins();
 
-        ArrayList<Jardim> lista = listagemResultado.comoSucesso().getObj();
-        if (lista.size() == 0) {
-            
-        }
-        lstJardins.getItems().addAll(lista);
+                if (listagemResultado.foiErro()) {
+                    System.out.println(listagemResultado.getMsg());
+                    return null;
+                }
+
+                ArrayList<Jardim> lista = listagemResultado.comoSucesso().getObj();
+                /* muda o texto de 'carregando' para o de lista vazia */
+                if (lista.size() == 0) {
+                    Platform.runLater(() -> lbPlaceholder.setText("+ Clique duplo para criar novo jardim!"));;
+                }
+                lstJardins.getItems().addAll(lista);
+                return null;
+            }
+
+        };
+
+        new Thread(task).start();
     }
 
 

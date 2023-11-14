@@ -11,9 +11,12 @@ import ifpr.pgua.eic.greenlink.models.entities.Tarefa;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioPlantas;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioTarefas;
 import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.Alert.AlertType;
 import javafx.scene.input.MouseEvent;
@@ -26,6 +29,9 @@ public class ListarTarefas implements Initializable {
 
     @FXML
     private ListView<Tarefa> lstTarefas;
+
+    @FXML
+    private Label lbPlaceholder;
 
     public ListarTarefas(RepositorioTarefas repoTarefas, RepositorioPlantas repoPlantas) {
         this.repoTarefas = repoTarefas;
@@ -55,14 +61,10 @@ public class ListarTarefas implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        Resultado<ArrayList<Tarefa>> listagemResultado = repoTarefas.listarTarefas();
-
-        if (listagemResultado.foiErro()) {
-            Alert alert = new Alert(AlertType.ERROR, listagemResultado.getMsg());
-            alert.showAndWait();
-            return;
-        }
-
+        /*
+         * criação de cells com checkbox interagível e string do 
+         * conteudo mostrado na cell
+         */
         lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(
             tarefa -> {
                 marcarFeito(tarefa);
@@ -78,8 +80,30 @@ public class ListarTarefas implements Initializable {
             }
         ));
 
-        ArrayList<Tarefa> lista = listagemResultado.comoSucesso().getObj();
-        lstTarefas.getItems().addAll(lista);
+        /* task do javafx para inicializar a listview em outra thread */
+        Task<Void> task = new Task<Void>() {
+            @Override
+            protected Void call() {
+                /* gera lista de tarefas */
+                Resultado<ArrayList<Tarefa>> listagemResultado = repoTarefas.listarTarefas();
+                if (listagemResultado.foiErro()) {
+                    Alert alert = new Alert(AlertType.ERROR, listagemResultado.getMsg());
+                    alert.showAndWait();
+                    return null;
+                }
+
+
+                ArrayList<Tarefa> lista = listagemResultado.comoSucesso().getObj();
+                /* muda o texto de 'carregando' para o de lista vazia */
+                if (lista.size() == 0) {
+                    Platform.runLater(() -> lbPlaceholder.setText("+ Clique duplo para criar nova tarefa!"));
+                }
+                lstTarefas.getItems().addAll(lista);
+                return null;
+            }
+        };
+
+        new Thread(task).start();
     }
 
 }

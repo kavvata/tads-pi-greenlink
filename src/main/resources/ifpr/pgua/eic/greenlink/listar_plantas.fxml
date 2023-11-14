@@ -9,7 +9,7 @@
    <children>
       <ListView fx:id="lstPlantas" onMouseClicked="#atualizarPlanta" VBox.vgrow="ALWAYS">
          <placeholder>
-            <Label text="+ Clique duplo para criar uma nova Planta!" />
+            <Label fx:id="lbPlaceholder" text="Carregando lista de plantas..." />
          </placeholder>
       </ListView>
    </children>

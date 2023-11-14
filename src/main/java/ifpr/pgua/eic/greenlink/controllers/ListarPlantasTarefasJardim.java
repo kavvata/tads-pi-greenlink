@@ -14,6 +14,8 @@ import ifpr.pgua.eic.greenlink.models.repositories.RepositorioJardins;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioPlantas;
 import ifpr.pgua.eic.greenlink.models.repositories.RepositorioTarefas;
 import io.github.hugoperlin.navigatorfx.BorderPaneRegion;
+import javafx.application.Platform;
+import javafx.concurrent.Task;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -32,6 +34,12 @@ public class ListarPlantasTarefasJardim implements Initializable {
 
     @FXML
     private Label lbNome;
+
+    @FXML
+    private Label lbPlaceholderPlantas;
+
+    @FXML
+    private Label lbPlaceholderTarefas;
 
     @FXML
     private ListView<Planta> lstPlantas;
@@ -67,6 +75,9 @@ public class ListarPlantasTarefasJardim implements Initializable {
             listaTarefas.addAll(tarefasResultado.comoSucesso().getObj());
         }
 
+        if (listaTarefas.size() == 0) {
+            lbPlaceholderTarefas.setText("+ Clique duplo para criar uma nova Tarefa!");
+        }
 
         lstTarefas.getItems().clear();
         lstTarefas.getItems().addAll(listaTarefas);
@@ -119,8 +130,6 @@ public class ListarPlantasTarefasJardim implements Initializable {
 
     @Override
     public void initialize(URL arg0, ResourceBundle arg1) {
-        lbNome.setText(jardim.getNome());
-
         // gera cellFactory para o lstTarefas
         lstTarefas.setCellFactory(TarefaListCell.geraCellFactory(
             tarefa -> {
@@ -131,40 +140,58 @@ public class ListarPlantasTarefasJardim implements Initializable {
                 String str = "";
                 str += tarefa.getNome() + " - ";
                 str += tarefa.getPlanta().getNome() + " - ";
-                str += "<" +tarefa.getPrazo().toString() + ">";
+                str += "<" + tarefa.getPrazo().toString() + ">";
 
                 return str;
             }
         ));
 
-        // puxa lista de plantas
-        Resultado<ArrayList<Planta>> plantasResultado = repoPlantas.listarPlantasJardim(jardim.getId());
+        Task<Void> task = new Task<Void>() {
 
-        if (plantasResultado.foiErro()) {
-            mostraErro(plantasResultado.getMsg());
-            return;
-        }
+            @Override
+            protected Void call() throws Exception {
 
-        ArrayList<Planta> plantas = plantasResultado.comoSucesso().getObj();
+                // puxa lista de plantas
+                Resultado<ArrayList<Planta>> plantasResultado = repoPlantas.listarPlantasJardim(jardim.getId());
 
-        lstPlantas.getItems().addAll(plantas);
+                if (plantasResultado.foiErro()) {
+                    mostraErro(plantasResultado.getMsg());
+                    return null;
+                }
 
-        // cria arraylist de tarefas 
-        ArrayList<Tarefa> tarefas = new ArrayList<>();
+                ArrayList<Planta> plantas = plantasResultado.comoSucesso().getObj();
+                if (plantas.size() == 0) {
+                    Platform.runLater(() -> lbPlaceholderPlantas.setText("+ Clique duplo para criar uma nova Planta!"));
+                }
+                lstPlantas.getItems().addAll(plantas);
 
-        for (Planta p : plantas) {
-            Resultado<ArrayList<Tarefa>> tarefasResultado = repoTarefas.listaTarefasPlanta(p.getId());
+                // cria arraylist de tarefas
+                ArrayList<Tarefa> tarefas = new ArrayList<>();
 
-            if (tarefasResultado.foiErro()) {
-                mostraErro(tarefasResultado.getMsg());
-                return;
+                for (Planta p : plantas) {
+                    Resultado<ArrayList<Tarefa>> tarefasResultado = repoTarefas.listaTarefasPlanta(p.getId());
+
+                    if (tarefasResultado.foiErro()) {
+                        mostraErro(tarefasResultado.getMsg());
+                        return null;
+                    }
+
+                    tarefas.addAll(tarefasResultado.comoSucesso().getObj());
+                }
+
+                if (tarefas.size() == 0) {
+                    Platform.runLater(() -> lbPlaceholderTarefas.setText("+ Clique duplo para criar uma nova Tarefa!"));
+                }
+
+                // adiciona lista de tarefas para a list view
+                lstTarefas.getItems().addAll(tarefas);
+                return null;
             }
             
-            tarefas.addAll(tarefasResultado.comoSucesso().getObj());
-        }
+        };
 
-        // adiciona lista de tarefas para a list view
-        lstTarefas.getItems().addAll(tarefas);
+        lbNome.setText(jardim.getNome());
+        new Thread(task).start();
     }
 
 }

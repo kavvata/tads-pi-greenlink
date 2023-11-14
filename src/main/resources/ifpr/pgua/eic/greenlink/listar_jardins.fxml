@@ -9,7 +9,7 @@
    <children>
       <ListView fx:id="lstJardins" onMouseClicked="#listarPlantasTarefas" prefHeight="595.0">
          <placeholder>
-            <Label text="+ Clique duplo para criar um novo Jardim!" />
+            <Label fx:id="lbPlaceholder" text="Carregando lista de jardins..." />
          </placeholder>
       </ListView>
    </children>
