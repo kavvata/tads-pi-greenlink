@@ -83,6 +83,10 @@ public class ManterTarefa implements Initializable {
             return false;
         }
 
+        if (dpPrazo.getValue() == null) {
+            mostraErro("Data inválida.");
+            return false;
+        }
         return true;
 
     }
@@ -91,9 +95,7 @@ public class ManterTarefa implements Initializable {
     void handleBtAcao(ActionEvent event) {
 
         if(!validaCampos()) {
-            if (dpPrazo.getValue() == null) {
-                mostraErro("Data inválida.");
-            }
+            /* possui campos inválidos */
             return;
         }
 
