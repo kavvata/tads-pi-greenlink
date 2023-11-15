@@ -79,6 +79,7 @@ public class ManterJardim implements Initializable {
     void handleBtAcao(ActionEvent event) {
 
         if (!validaCampos()) {
+            /* possui campos inválidos */
             return;
         }
 

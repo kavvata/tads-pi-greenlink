@@ -113,6 +113,7 @@ public class ManterPlanta implements Initializable {
     void handleBtAcao(ActionEvent event) {
 
         if(!validaCampos()) {
+            /* possui campos inválidos */
             return;
         }
 
@@ -215,7 +216,7 @@ public class ManterPlanta implements Initializable {
 
         if (listaJardim.size()  == 0) {
             mostraErro("Para cadastrar uma planta, é necessário possuir pelo menos um jardim cadastrado.");
-            App.pushScreen("PRINCIPAL");
+            App.changeScreenRegion(telaAnterior, BorderPaneRegion.CENTER);
             return;
         }
 
