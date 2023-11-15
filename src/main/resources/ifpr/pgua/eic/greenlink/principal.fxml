@@ -19,7 +19,10 @@
    <top>
       <HBox alignment="CENTER_RIGHT" prefHeight="50.0" spacing="10.0" BorderPane.alignment="CENTER">
          <children>
-            <Label fx:id="lbNomeTela" text="Greenlink" />
+            <Label fx:id="lbNomeTela" text="Greenlink">
+               <padding>
+                  <Insets left="5.0" />
+               </padding></Label>
             <HBox HBox.hgrow="ALWAYS" />
             <ButtonBar>
                <buttons>

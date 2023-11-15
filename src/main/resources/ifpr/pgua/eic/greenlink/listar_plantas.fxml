@@ -5,7 +5,8 @@
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.VBox?>
 
-<VBox maxHeight="-Infinity" maxWidth="-Infinity" minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ifpr.pgua.eic.greenlink.controllers.ListarPlantas">
+<!-- magic numbers gerado pelo scene builder ao selecionar MAX_VALUE -->
+<VBox maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="400.0" minWidth="600.0" prefHeight="600.0" prefWidth="800.0" spacing="10.0" xmlns="http://javafx.com/javafx/21.0.1" xmlns:fx="http://javafx.com/fxml/1" fx:controller="ifpr.pgua.eic.greenlink.controllers.ListarPlantas">
    <children>
       <ListView fx:id="lstPlantas" onMouseClicked="#atualizarPlanta" VBox.vgrow="ALWAYS">
          <placeholder>
