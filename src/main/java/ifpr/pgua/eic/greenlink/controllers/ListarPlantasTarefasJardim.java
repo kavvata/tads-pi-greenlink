@@ -120,7 +120,11 @@ public class ListarPlantasTarefasJardim implements Initializable {
 
     @FXML
     void manterJardim(ActionEvent event) {
-        App.changeScreenRegion("MANTERJARDIM", BorderPaneRegion.CENTER, o -> new ManterJardim(repoJardins, jardim));
+        App.changeScreenRegion("MANTERJARDIM", BorderPaneRegion.CENTER, o -> {
+            ManterJardim controller = new ManterJardim(repoJardins, jardim);
+            controller.setTelaAnterior("LISTARPLANTASTAREFASJARDIM");
+            return controller;
+        });
     }
 
     @FXML
@@ -148,6 +152,7 @@ public class ListarPlantasTarefasJardim implements Initializable {
 
         Task<Void> task = new Task<Void>() {
 
+            /* task para carregar listas em outra thread */
             @Override
             protected Void call() throws Exception {
 

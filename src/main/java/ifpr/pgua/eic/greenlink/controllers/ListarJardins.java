@@ -44,7 +44,7 @@ public class ListarJardins implements Initializable {
 
     @FXML
     void cadastrarJardim(ActionEvent e) {
-        App.changeScreenRegion("MANTERJARDIM", BorderPaneRegion.CENTER);
+        App.changeScreenRegion("MANTERJARDIM", BorderPaneRegion.CENTER, o -> new ManterJardim(repo, null));
     }
 
     @FXML

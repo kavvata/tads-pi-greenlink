@@ -30,6 +30,8 @@ public class ManterJardim implements Initializable {
      */
 
 
+    private String telaAnterior = "LISTARJARDINS";
+
     private Jardim antigo;
 
     private RepositorioJardins repo;
@@ -53,6 +55,10 @@ public class ManterJardim implements Initializable {
     public ManterJardim(RepositorioJardins repo, Jardim antigo) {
         this.repo = repo;
         this.antigo = antigo;
+    }
+
+    public void setTelaAnterior(String telaAnterior) {
+        this.telaAnterior = telaAnterior;
     }
 
     private boolean isAtualizacao() {
@@ -146,7 +152,7 @@ public class ManterJardim implements Initializable {
 
     @FXML
     void voltar(ActionEvent event) {
-        App.changeScreenRegion("LISTARJARDINS", BorderPaneRegion.CENTER);
+        App.changeScreenRegion(telaAnterior, BorderPaneRegion.CENTER);
     }
 
 
