@@ -1,6 +1,7 @@
 package ifpr.pgua.eic.greenlink.controllers;
 
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -74,7 +75,7 @@ public class ListarTarefas implements Initializable {
                 String str = "";
                 str += tarefa.getNome() + " - ";
                 str += tarefa.getPlanta().getNome() + " - ";
-                str += tarefa.getPrazo().toString();
+                str += "<" + tarefa.getPrazo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ">";
 
                 return str;
             }

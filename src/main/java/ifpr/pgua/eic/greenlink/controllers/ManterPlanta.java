@@ -1,6 +1,7 @@
 package ifpr.pgua.eic.greenlink.controllers;
 
 import java.net.URL;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.ResourceBundle;
 
@@ -249,7 +250,7 @@ public class ManterPlanta implements Initializable {
                     atualizarLista();
                 },
                 t -> {
-                    return t.getNome() + " - " + t.getPrazo().toString();
+                    return t.getNome() + " - " + "<" + t.getPrazo().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")) + ">";
                 }
             ));
 
