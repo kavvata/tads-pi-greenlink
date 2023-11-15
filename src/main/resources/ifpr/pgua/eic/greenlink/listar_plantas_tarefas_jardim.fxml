@@ -14,7 +14,7 @@
       <HBox alignment="CENTER" prefHeight="100.0" prefWidth="200.0" spacing="10.0">
          <children>
             <Label fx:id="lbNome" text="Nome do Jardim" />
-            <Button mnemonicParsing="false" onAction="#manterJardim" text="Editar" />
+            <Button mnemonicParsing="false" onAction="#manterJardim" text="✎" />
          </children>
       </HBox>
       <Separator prefWidth="200.0" />
