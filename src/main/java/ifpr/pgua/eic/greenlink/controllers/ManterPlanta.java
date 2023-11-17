@@ -217,7 +217,7 @@ public class ManterPlanta implements Initializable {
 
         if (listaJardim.size()  == 0) {
             mostraErro("Para cadastrar uma planta, é necessário possuir pelo menos um jardim cadastrado.");
-            App.changeScreenRegion(telaAnterior, BorderPaneRegion.CENTER);
+            App.pushScreen("PRINCIPAL");
             return;
         }
 

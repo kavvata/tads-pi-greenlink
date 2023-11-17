@@ -171,7 +171,7 @@ public class JDBCPlantaDAO implements PlantaDAO {
             }
 
             pstm.setString(1, nome);
-            pstm.setInt(1, sessao.getUserId());
+            pstm.setInt(2, sessao.getUserId());
 
             ResultSet rs = pstm.executeQuery();
 
