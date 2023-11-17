@@ -139,7 +139,13 @@ public class JDBCJardimDAO implements JardimDAO {
 
             //                           buscar_jardim_nome(varchar nome, int usuario_id)
             PreparedStatement pstm = con.prepareStatement("call buscar_jardim_nome(?,?)");
+
+            if(!sessao.isLogado()) {
+                return Resultado.erro("Sua sessão expirou, Faça login novamente!");
+            }
+            
             pstm.setString(1, nome);
+            pstm.setInt(2, sessao.getUserId());
 
             ResultSet rs = pstm.executeQuery();
 

@@ -121,7 +121,7 @@ SELECT
 FROM
     jardins j
 WHERE
-    j.usuario_id = usr_id AND j.nome = j_nome AND p.ativo = 1;
+    j.usuario_id = usr_id AND j.nome = j_nome AND j.ativo = 1;
 END $$
 DELIMITER ;
 
@@ -219,5 +219,38 @@ BEGIN
         RETURN true;
     END IF;
     RETURN false;
+END $$
+DELIMITER ;
+
+
+
+
+--- ----------------------------------------------------------
+--- Relatórios
+--- ----------------------------------------------------------
+
+DELIMITER $$
+drop procedure if exists listar_tarefas_proximas $$
+create procedure listar_tarefas_proximas(in usr_id int)
+begin
+SELECT
+    t.id AS id,
+    t.nome AS nome,
+    t.descricao AS descricao,
+    t.prazo AS prazo,
+    t.feito AS feito,
+    t.planta_id AS planta_id
+FROM
+    tarefas t
+JOIN plantas p ON
+    t.planta_id = p.id
+JOIN jardins j ON
+    p.jardim_id = j.id
+WHERE
+    j.usuario_id = usr_id 
+    AND t.ativo = 1 
+    AND t.feito=0
+    AND DATEDIFF(t.prazo, CURDATE()) >= 0
+    AND DATEDIFF(t.prazo, CURDATE()) < 7;
 END $$
 DELIMITER ;
