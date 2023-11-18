@@ -143,7 +143,7 @@ public class ManterJardim implements Initializable {
                 Alert alert = new Alert(AlertType.INFORMATION, resultado.getMsg());
 
                 alert.showAndWait();
-                voltar(e);    
+                App.changeScreenRegion("LISTARJARDINS", BorderPaneRegion.CENTER);
             }
         });
 
